@@ -60,6 +60,7 @@ export default function Login() {
           <Auth
             supabaseClient={supabase}
             view="sign_in"
+            providers={[]}
             appearance={{
               theme: ThemeSupa,
               variables: {
