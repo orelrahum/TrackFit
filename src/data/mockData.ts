@@ -23,7 +23,7 @@ export const mockData: DayData = {
           fat: 5,
           weight: 140,
           unit: "גרם",
-          image: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=80"
+          image_url: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=80"
         }
       ]
     },
@@ -40,7 +40,7 @@ export const mockData: DayData = {
           fat: 0,
           weight: 45,
           unit: "גרם",
-          image: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=80"
+          image_url: "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?q=80&w=80"
         }
       ]
     }

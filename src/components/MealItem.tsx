@@ -11,13 +11,24 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border-b border-gray-100 hover:bg-gray-50">
       <div className="flex items-center space-x-3 space-x-reverse mb-2 sm:mb-0">
-        {meal.image && (
-          <img 
-            src={meal.image} 
-            alt={meal.name} 
-            className="w-12 h-12 object-cover rounded-full"
-          />
-        )}
+        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+          {meal.image_url ? (
+            <img 
+              src={meal.image_url} 
+              alt={meal.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src = '/placeholder.svg';
+              }}
+            />
+          ) : (
+            <img 
+              src="/placeholder.svg"
+              alt="placeholder"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
         <div className="mr-3">
           <h3 className="font-medium">
             {meal.name}

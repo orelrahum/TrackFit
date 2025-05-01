@@ -107,6 +107,7 @@ const HomePage = () => {
         fat: mealData.fat || 0,
         weight: mealData.weight,
         unit: mealData.unit,
+        image_url: mealData.image_url,
       };
 
       // מוסיף את הארוחה לקבוצה הראשונה
