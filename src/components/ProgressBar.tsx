@@ -9,7 +9,7 @@ interface ProgressBarProps {
   colorClass?: string;
 }
 
-const ProgressBar = ({ current, max, label, valueLabel, colorClass = "bg-progress-blue" }: ProgressBarProps) => {
+const ProgressBar = ({ current, max, label, valueLabel, colorClass }: ProgressBarProps) => {
   const percentage = Math.min(Math.round((current / max) * 100), 100);
   
   return (
@@ -22,7 +22,11 @@ const ProgressBar = ({ current, max, label, valueLabel, colorClass = "bg-progres
         <div 
           className={cn("progress-value", colorClass)} 
           style={{ width: `${percentage}%` }}
-        />
+        >
+          <div className="progress-percentage">
+            {percentage}%
+          </div>
+        </div>
       </div>
     </div>
   );

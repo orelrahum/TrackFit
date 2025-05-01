@@ -4,7 +4,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
-import NutrientChart from "@/components/NutrientChart";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
 import { mockData } from "@/data/mockData";
@@ -226,35 +225,8 @@ const HomePage = () => {
           onNextDay={handleNextDay} 
         />
         
-        {/* תצוגה למסכים גדולים */}
-        <div className="hidden md:grid md:grid-cols-12 gap-6">
-          <div className="md:col-span-8 space-y-6">
-            <DailySummary nutrients={dayData.nutrients} />
-            <MealList 
-              meals={dayData.meals}
-              onAddMeal={handleAddMeal}
-              onAddWithAI={handleAddWithAI}
-              onEditMeal={handleEditMeal}
-              onDeleteMeal={handleDeleteMeal}
-            />
-          </div>
-          <div className="md:col-span-4">
-            <NutrientChart 
-              protein={dayData.nutrients.protein.amount} 
-              carbs={dayData.nutrients.carbs.amount} 
-              fat={dayData.nutrients.fat.amount} 
-            />
-          </div>
-        </div>
-        
-        {/* תצוגה למסכים קטנים */}
-        <div className="md:hidden space-y-6">
+        <div className="space-y-6">
           <DailySummary nutrients={dayData.nutrients} />
-          <NutrientChart 
-            protein={dayData.nutrients.protein.amount} 
-            carbs={dayData.nutrients.carbs.amount} 
-            fat={dayData.nutrients.fat.amount} 
-          />
           <MealList 
             meals={dayData.meals}
             onAddMeal={handleAddMeal}

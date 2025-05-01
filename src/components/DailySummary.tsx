@@ -16,7 +16,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
         max={calories.target}
         label="קלוריות"
         valueLabel={`${calories.amount} / ${calories.target} קק"ל`}
-        colorClass="bg-progress-blue"
+        colorClass="bg-progress-calories"
       />
       
       <ProgressBar 
@@ -24,7 +24,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
         max={protein.target}
         label="חלבון"
         valueLabel={`${protein.amount} / ${protein.target} גרם`}
-        colorClass="bg-progress-green"
+        colorClass="bg-progress-protein"
       />
       
       <ProgressBar 
@@ -32,7 +32,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
         max={carbs.target}
         label="פחמימות"
         valueLabel={`${carbs.amount} / ${carbs.target} גרם`}
-        colorClass="bg-progress-blue"
+        colorClass="bg-progress-carbs"
       />
       
       <ProgressBar 
@@ -40,7 +40,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
         max={fat.target}
         label="שומן"
         valueLabel={`${fat.amount} / ${fat.target} גרם`}
-        colorClass="bg-progress-orange"
+        colorClass="bg-progress-fat"
       />
     </div>
   );
