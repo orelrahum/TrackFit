@@ -1,20 +1,30 @@
 
 import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
-import { mockData } from "@/data/mockData";
 import { DayData, MealGroup, Meal } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 
 const HomePage = () => {
   const { toast } = useToast();
   const { signOut } = useAuth();
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [dayData, setDayData] = useState<DayData>(mockData);
+  const [dayData, setDayData] = useState<DayData>({
+    date: currentDate.toISOString().split('T')[0],
+    nutrients: {
+      calories: { amount: 0, target: 2000 },
+      protein: { amount: 0, target: 150 },
+      carbs: { amount: 0, target: 250 },
+      fat: { amount: 0, target: 70 }
+    },
+    meals: []
+  });
 
   const handlePrevDay = () => {
     const prevDay = new Date(currentDate);
@@ -208,7 +218,26 @@ const HomePage = () => {
             <div className="flex items-center gap-4">
               <div className="text-sm text-gray-600">מעקב תזונה יומי</div>
               <button
-                onClick={() => signOut()}
+                onClick={async () => {
+                  try {
+                    const { error } = await signOut();
+                    if (error) {
+                      toast({
+                        title: "שגיאה בהתנתקות",
+                        description: error.message,
+                        variant: "destructive",
+                      });
+                    } else {
+                      navigate("/auth/login", { replace: true });
+                    }
+                  } catch (err) {
+                    toast({
+                      title: "שגיאה בהתנתקות",
+                      description: "אנא נסה שוב",
+                      variant: "destructive",
+                    });
+                  }
+                }}
                 className="px-3 py-1 text-sm text-red-600 hover:text-red-800 font-medium rounded-md hover:bg-red-50 transition-colors"
               >
                 התנתק
