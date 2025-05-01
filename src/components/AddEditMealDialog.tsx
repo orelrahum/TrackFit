@@ -103,33 +103,80 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
 
   const handleFoodSelect = (food: DBFood) => {
     setSelectedFood(food);
-    const defaultUnit = food.food_measurement_units?.[0]?.unit || "גרם";
-    setFormData({
-      name: food.name_he,
-      unit: defaultUnit,
-      weight: 1,
-      image_url: food.image_url,
-      ...calculateNutrition(food, 1, defaultUnit)
-    });
+    
+    // Always default to גרם if available, otherwise use first available unit
+    let defaultUnit = "גרם";
+    if (food.food_measurement_units) {
+      const hasGrams = food.food_measurement_units.some(mu => mu.unit === "גרם");
+      if (!hasGrams && food.food_measurement_units.length > 0) {
+        defaultUnit = food.food_measurement_units[0].unit;
+      }
+    }
+
+    try {
+      const nutritionValues = calculateNutrition(food, 100, defaultUnit);
+      setFormData({
+        name: food.name_he,
+        unit: defaultUnit,
+        weight: 100, // Reset to 100 as default amount
+        image_url: food.image_url,
+        ...nutritionValues
+      });
+    } catch (error) {
+      console.error('Error calculating nutrition:', error);
+      // Set safe default values if calculation fails
+      setFormData({
+        name: food.name_he,
+        unit: defaultUnit,
+        weight: 100,
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        image_url: food.image_url,
+      });
+    }
     setComboboxOpen(false);
   };
 
   const handleAmountChange = (amount: number) => {
-    if (!selectedFood) return;
-    setFormData(prev => ({
-      ...prev,
-      weight: amount,
-      ...calculateNutrition(selectedFood, amount, prev.unit || "גרם")
-    }));
+    if (!selectedFood || !amount) return;
+    
+    try {
+      const nutritionValues = calculateNutrition(selectedFood, amount, formData.unit || "גרם");
+      setFormData(prev => ({
+        ...prev,
+        weight: amount,
+        ...nutritionValues
+      }));
+    } catch (error) {
+      console.error('Error calculating nutrition:', error);
+      // Keep previous values but update weight
+      setFormData(prev => ({
+        ...prev,
+        weight: amount
+      }));
+    }
   };
 
   const handleUnitChange = (unit: string) => {
-    if (!selectedFood) return;
-    setFormData(prev => ({
-      ...prev,
-      unit,
-      ...calculateNutrition(selectedFood, prev.weight || 0, unit)
-    }));
+    if (!selectedFood || !unit) return;
+    
+    try {
+      const nutritionValues = calculateNutrition(selectedFood, formData.weight || 100, unit);
+      setFormData(prev => ({
+        ...prev,
+        unit,
+        ...nutritionValues
+      }));
+    } catch (error) {
+      console.error('Error calculating nutrition:', error);
+      // Keep previous values but update unit
+      setFormData(prev => ({
+        ...prev,
+        unit
+      }));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
