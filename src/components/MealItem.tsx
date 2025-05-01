@@ -19,7 +19,15 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
           />
         )}
         <div className="mr-3">
-          <h3 className="font-medium">{meal.name}</h3>
+          <h3 className="font-medium">
+            {meal.name}
+            {(meal.weight || meal.unit) && (
+              <span className="text-gray-500 text-sm mr-1">
+                {meal.weight && `(${meal.weight}${meal.unit ? ' ' + meal.unit : 'g'})`}
+                {!meal.weight && meal.unit && `(${meal.unit})`}
+              </span>
+            )}
+          </h3>
         </div>
       </div>
       

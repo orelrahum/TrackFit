@@ -19,6 +19,8 @@ export interface Meal {
   carbs: number;
   fat: number;
   image?: string;
+  weight?: number;
+  unit?: string;
 }
 
 export interface MealGroup {

@@ -1,13 +1,15 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import NutrientChart from "@/components/NutrientChart";
 import MealList from "@/components/MealList";
+import AddEditMealDialog from "@/components/AddEditMealDialog";
 import { mockData } from "@/data/mockData";
 import { DayData, MealGroup, Meal } from "@/types";
+import { v4 as uuidv4 } from "uuid";
 
 const HomePage = () => {
   const { toast } = useToast();
@@ -48,11 +50,12 @@ const HomePage = () => {
     }
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>(undefined);
+
   const handleAddMeal = () => {
-    toast({
-      title: "פתיחת טופס הוספת ארוחה",
-      description: "בגרסה מלאה של האפליקציה, כאן ייפתח טופס להוספת ארוחה חדשה",
-    });
+    setSelectedMeal(undefined);
+    setIsDialogOpen(true);
   };
 
   const handleAddWithAI = () => {
@@ -63,10 +66,73 @@ const HomePage = () => {
   };
 
   const handleEditMeal = (id: string) => {
-    toast({
-      title: "עריכת ארוחה",
-      description: `בגרסה מלאה של האפליקציה, כאן ייפתח טופס לעריכת ארוחה מספר ${id}`,
-    });
+    const meal = dayData.meals
+      .flatMap(group => group.meals)
+      .find(meal => meal.id === id);
+    
+    if (meal) {
+      setSelectedMeal(meal);
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleSaveMeal = (mealData: Partial<Meal>) => {
+    if (selectedMeal) {
+      // עריכת ארוחה קיימת
+      const updatedMealGroups = dayData.meals.map(group => ({
+        ...group,
+        meals: group.meals.map(meal => 
+          meal.id === selectedMeal.id 
+            ? { ...meal, ...mealData }
+            : meal
+        )
+      }));
+
+      setDayData({
+        ...dayData,
+        meals: updatedMealGroups
+      });
+
+      toast({
+        title: "הארוחה נערכה בהצלחה",
+      });
+    } else {
+      // הוספת ארוחה חדשה
+      const newMeal: Meal = {
+        id: uuidv4(),
+        name: mealData.name || "",
+        calories: mealData.calories || 0,
+        protein: mealData.protein || 0,
+        carbs: mealData.carbs || 0,
+        fat: mealData.fat || 0,
+        weight: mealData.weight,
+        unit: mealData.unit,
+      };
+
+      // מוסיף את הארוחה לקבוצה הראשונה
+      const updatedMealGroups = [...dayData.meals];
+      if (updatedMealGroups.length > 0) {
+        updatedMealGroups[0] = {
+          ...updatedMealGroups[0],
+          meals: [...updatedMealGroups[0].meals, newMeal]
+        };
+      } else {
+        updatedMealGroups.push({
+          id: uuidv4(),
+          name: "ארוחה חדשה",
+          meals: [newMeal]
+        });
+      }
+
+      setDayData({
+        ...dayData,
+        meals: updatedMealGroups
+      });
+
+      toast({
+        title: "הארוחה נוספה בהצלחה",
+      });
+    }
   };
 
   const handleDeleteMeal = (id: string) => {
@@ -133,8 +199,9 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-8">
-      <header className="bg-white shadow-sm py-4 mb-6">
+    <>
+      <div className="min-h-screen bg-gray-50 pb-8">
+        <header className="bg-white shadow-sm py-4 mb-6">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div className="text-xl font-bold text-blue-600">TrackFit</div>
@@ -196,7 +263,15 @@ const HomePage = () => {
           />
         </div>
       </main>
-    </div>
+      </div>
+      
+      <AddEditMealDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleSaveMeal}
+        meal={selectedMeal}
+      />
+    </>
   );
 };
 
