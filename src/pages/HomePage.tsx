@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
@@ -10,6 +11,7 @@ import { DayData, MealGroup, Meal } from "@/types";
 
 const HomePage = () => {
   const { toast } = useToast();
+  const { signOut } = useAuth();
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [dayData, setDayData] = useState<DayData>(mockData);
 
@@ -136,7 +138,15 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div className="text-xl font-bold text-blue-600">TrackFit</div>
-            <div className="text-sm text-gray-600">מעקב תזונה יומי</div>
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-gray-600">מעקב תזונה יומי</div>
+              <button
+                onClick={() => signOut()}
+                className="px-3 py-1 text-sm text-red-600 hover:text-red-800 font-medium rounded-md hover:bg-red-50 transition-colors"
+              >
+                התנתק
+              </button>
+            </div>
           </div>
         </div>
       </header>
