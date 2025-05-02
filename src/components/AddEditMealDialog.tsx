@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,6 +118,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
       const nutritionValues = calculateNutrition(food, 100, defaultUnit);
       setFormData({
         name: food.name_he,
+        food_id: food.id,
         unit: defaultUnit,
         weight: 100, // Reset to 100 as default amount
         image_url: food.image_url,

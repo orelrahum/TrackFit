@@ -14,6 +14,7 @@ export interface Nutrients {
 export interface Meal {
   id: string;
   name: string;
+  food_id?: string;
   calories: number;
   protein: number;
   carbs: number;
