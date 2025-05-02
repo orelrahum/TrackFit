@@ -36,16 +36,7 @@ const HomePage = () => {
   const handleNextDay = () => {
     const nextDay = new Date(currentDate);
     nextDay.setDate(currentDate.getDate() + 1);
-    
-    if (nextDay <= new Date()) {
-      setCurrentDate(nextDay);
-    } else {
-      toast({
-        title: "לא ניתן לצפות בתאריך עתידי",
-        description: "ניתן לצפות רק בימים שכבר עברו",
-        variant: "destructive",
-      });
-    }
+    setCurrentDate(nextDay);
   };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
