@@ -25,6 +25,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
     fat: meal?.fat || 0,
     weight: meal?.weight || 0,
     unit: meal?.unit || "גרם",
+    food_id: meal?.food_id,
+    image_url: meal?.image_url
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<DBFood[]>([]);
@@ -58,6 +60,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
         fat: meal?.fat || 0,
         weight: meal?.weight || 0,
         unit: meal?.unit || "גרם",
+        food_id: meal?.food_id,
+        image_url: meal?.image_url
       });
     }
   }, [dialogOpen, meal]);

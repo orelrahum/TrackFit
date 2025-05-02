@@ -110,3 +110,43 @@ export async function getMealsForDate(date: string) {
 
   return mealGroups || []
 }
+
+/**
+ * Updates an existing meal's data
+ */
+export async function updateMeal(mealId: string, meal: Partial<Meal>) {
+  const { error } = await supabase
+    .from('meals')
+    .update({
+      food_id: meal.food_id,
+      name: meal.name,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
+      weight: meal.weight,
+      unit: meal.unit,
+      image_url: meal.image_url
+    })
+    .eq('id', mealId)
+
+  if (error) {
+    console.error('Update error details:', error)
+    throw new Error(`Error updating meal: ${error.message}`)
+  }
+}
+
+/**
+ * Deletes a meal from the database
+ */
+export async function deleteMeal(mealId: string) {
+  const { error } = await supabase
+    .from('meals')
+    .delete()
+    .eq('id', mealId)
+
+  if (error) {
+    console.error('Delete error details:', error)
+    throw new Error(`Error deleting meal: ${error.message}`)
+  }
+}

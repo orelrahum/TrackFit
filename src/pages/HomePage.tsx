@@ -2,14 +2,14 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { getOrCreateMealGroup, addMealToGroup } from "@/lib/meal-service";
+import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal } from "@/lib/meal-service";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
 import { DayData, MealGroup, Meal } from "@/types";
-import { getMealsForDate } from "@/lib/meal-service";
 import { v4 as uuidv4 } from "uuid";
+import { calculateTotalNutrients } from "@/lib/meal-utils";
 
 const HomePage = () => {
   const { toast } = useToast();
@@ -90,9 +90,16 @@ const HomePage = () => {
         const dateStr = currentDate.toISOString().split('T')[0];
         const groups = await getMealsForDate(dateStr);
         if (groups.length > 0) {
+          const totals = calculateTotalNutrients(groups);
           setDayData(prev => ({
             ...prev,
-            meals: groups
+            meals: groups,
+            nutrients: {
+              calories: { ...prev.nutrients.calories, amount: totals.calories },
+              protein: { ...prev.nutrients.protein, amount: totals.protein },
+              carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+              fat: { ...prev.nutrients.fat, amount: totals.fat }
+            }
           }));
         }
       } catch (error) {
@@ -113,22 +120,26 @@ const HomePage = () => {
       
       if (selectedMeal) {
         // עריכת ארוחה קיימת
-        const updatedMealGroups = dayData.meals.map(group => ({
-          ...group,
-          meals: group.meals.map(meal => 
-            meal.id === selectedMeal.id 
-              ? { ...meal, ...mealData }
-              : meal
-          )
-        }));
-
-        setDayData({
-          ...dayData,
-          meals: updatedMealGroups
-        });
+        await updateMeal(selectedMeal.id, mealData);
+        
+        // Refresh data from server
+        const groups = await getMealsForDate(dateStr);
+        if (groups.length > 0) {
+          const totals = calculateTotalNutrients(groups);
+          setDayData(prev => ({
+            ...prev,
+            meals: groups,
+            nutrients: {
+              calories: { ...prev.nutrients.calories, amount: totals.calories },
+              protein: { ...prev.nutrients.protein, amount: totals.protein },
+              carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+              fat: { ...prev.nutrients.fat, amount: totals.fat }
+            }
+          }));
+        }
 
         toast({
-          title: "הארוחה נערכה בהצלחה",
+          title: "הארוחה נערכה בהצלחה"
         });
       } else {
         // הוספת ארוחה חדשה
@@ -138,10 +149,17 @@ const HomePage = () => {
         // Refresh meals data
         const groups = await getMealsForDate(dateStr);
         if (groups.length > 0) {
-          setDayData(prev => ({
-            ...prev,
-            meals: groups
-          }));
+        const totals = calculateTotalNutrients(groups);
+        setDayData(prev => ({
+          ...prev,
+          meals: groups,
+          nutrients: {
+            calories: { ...prev.nutrients.calories, amount: totals.calories },
+            protein: { ...prev.nutrients.protein, amount: totals.protein },
+            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+            fat: { ...prev.nutrients.fat, amount: totals.fat }
+          }
+        }));
         }
 
         toast({
@@ -157,62 +175,39 @@ const HomePage = () => {
     }
   };
 
-  const handleDeleteMeal = (id: string) => {
-    // מדמה מחיקת ארוחה
-    let updatedMealGroups = [...dayData.meals];
-    let deletedMealData = { calories: 0, protein: 0, carbs: 0, fat: 0 };
-    
-    updatedMealGroups = updatedMealGroups.map(group => {
-      const mealIndex = group.meals.findIndex(meal => meal.id === id);
+  const handleDeleteMeal = async (id: string) => {
+    try {
+      // Delete from Supabase
+      await deleteMeal(id);
       
-      if (mealIndex !== -1) {
-        const deletedMeal = group.meals[mealIndex];
-        deletedMealData = {
-          calories: deletedMeal.calories,
-          protein: deletedMeal.protein,
-          carbs: deletedMeal.carbs,
-          fat: deletedMeal.fat
-        };
-        
-        const updatedMeals = [...group.meals];
-        updatedMeals.splice(mealIndex, 1);
-        return { ...group, meals: updatedMeals };
-      }
+      // Refresh data from server
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const groups = await getMealsForDate(dateStr);
+      const totals = calculateTotalNutrients(groups);
       
-      return group;
-    });
+      setDayData(prev => ({
+        ...prev,
+        meals: groups,
+        nutrients: {
+          calories: { ...prev.nutrients.calories, amount: totals.calories },
+          protein: { ...prev.nutrients.protein, amount: totals.protein },
+          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+          fat: { ...prev.nutrients.fat, amount: totals.fat }
+        }
+      }));
     
-    updatedMealGroups = updatedMealGroups.filter(group => group.meals.length > 0);
-    
-    const updatedNutrients = {
-      calories: {
-        ...dayData.nutrients.calories,
-        amount: Math.max(0, dayData.nutrients.calories.amount - deletedMealData.calories)
-      },
-      protein: {
-        ...dayData.nutrients.protein,
-        amount: Math.max(0, dayData.nutrients.protein.amount - deletedMealData.protein)
-      },
-      carbs: {
-        ...dayData.nutrients.carbs,
-        amount: Math.max(0, dayData.nutrients.carbs.amount - deletedMealData.carbs)
-      },
-      fat: {
-        ...dayData.nutrients.fat,
-        amount: Math.max(0, dayData.nutrients.fat.amount - deletedMealData.fat)
-      }
-    };
-    
-    setDayData({
-      ...dayData,
-      meals: updatedMealGroups,
-      nutrients: updatedNutrients
-    });
-    
-    toast({
-      title: "הארוחה נמחקה בהצלחה",
-      description: "הערכים התזונתיים עודכנו בהתאם",
-    });
+      toast({
+        title: "הארוחה נמחקה בהצלחה",
+        description: "הערכים התזונתיים עודכנו בהתאם",
+      });
+    } catch (error) {
+      console.error('Error deleting meal:', error);
+      toast({
+        title: "שגיאה במחיקת הארוחה",
+        description: "אנא נסה שוב",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
