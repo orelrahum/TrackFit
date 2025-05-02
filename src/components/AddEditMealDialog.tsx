@@ -119,22 +119,24 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
     }
 
     try {
-      const nutritionValues = calculateNutrition(food, 100, defaultUnit);
+      const defaultWeight = defaultUnit === "גרם" ? 100 : 1;
+      const nutritionValues = calculateNutrition(food, defaultWeight, defaultUnit);
       setFormData({
         name: food.name_he,
         food_id: food.id,
         unit: defaultUnit,
-        weight: 100, // Reset to 100 as default amount
+        weight: defaultWeight,
         image_url: food.image_url,
         ...nutritionValues
       });
     } catch (error) {
       console.error('Error calculating nutrition:', error);
       // Set safe default values if calculation fails
+      const defaultWeight = defaultUnit === "גרם" ? 100 : 1;
       setFormData({
         name: food.name_he,
         unit: defaultUnit,
-        weight: 100,
+        weight: defaultWeight,
         calories: 0,
         protein: 0,
         carbs: 0,
@@ -168,19 +170,24 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
   const handleUnitChange = (unit: string) => {
     if (!selectedFood || !unit) return;
     
+    // Set default weight based on unit
+    const newWeight = unit === "גרם" ? 100 : 1;
+    
     try {
-      const nutritionValues = calculateNutrition(selectedFood, formData.weight || 100, unit);
+      const nutritionValues = calculateNutrition(selectedFood, newWeight, unit);
       setFormData(prev => ({
         ...prev,
         unit,
+        weight: newWeight,
         ...nutritionValues
       }));
     } catch (error) {
       console.error('Error calculating nutrition:', error);
-      // Keep previous values but update unit
+      // Keep previous values but update unit and weight
       setFormData(prev => ({
         ...prev,
-        unit
+        unit,
+        weight: newWeight
       }));
     }
   };
