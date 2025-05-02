@@ -31,11 +31,6 @@ const HomePage = () => {
     const prevDay = new Date(currentDate);
     prevDay.setDate(currentDate.getDate() - 1);
     setCurrentDate(prevDay);
-    
-    toast({
-      title: "מציג נתונים מהיום הקודם",
-      description: "בגרסה מלאה של האפליקציה, כאן יוצגו הנתונים האמיתיים מהיום הקודם",
-    });
   };
 
   const handleNextDay = () => {
@@ -44,10 +39,6 @@ const HomePage = () => {
     
     if (nextDay <= new Date()) {
       setCurrentDate(nextDay);
-      toast({
-        title: "מציג נתונים מהיום הבא",
-        description: "בגרסה מלאה של האפליקציה, כאן יוצגו הנתונים האמיתיים מהיום הבא",
-      });
     } else {
       toast({
         title: "לא ניתן לצפות בתאריך עתידי",
@@ -89,19 +80,18 @@ const HomePage = () => {
       try {
         const dateStr = currentDate.toISOString().split('T')[0];
         const groups = await getMealsForDate(dateStr);
-        if (groups.length > 0) {
-          const totals = calculateTotalNutrients(groups);
-          setDayData(prev => ({
-            ...prev,
-            meals: groups,
-            nutrients: {
-              calories: { ...prev.nutrients.calories, amount: totals.calories },
-              protein: { ...prev.nutrients.protein, amount: totals.protein },
-              carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-              fat: { ...prev.nutrients.fat, amount: totals.fat }
-            }
-          }));
-        }
+        const totals = calculateTotalNutrients(groups);
+        setDayData(prev => ({
+          ...prev,
+          date: dateStr,
+          meals: groups,
+          nutrients: {
+            calories: { ...prev.nutrients.calories, amount: totals.calories },
+            protein: { ...prev.nutrients.protein, amount: totals.protein },
+            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+            fat: { ...prev.nutrients.fat, amount: totals.fat }
+          }
+        }));
       } catch (error) {
         console.error('Error loading meals:', error);
         toast({
@@ -124,31 +114,6 @@ const HomePage = () => {
         
         // Refresh data from server
         const groups = await getMealsForDate(dateStr);
-        if (groups.length > 0) {
-          const totals = calculateTotalNutrients(groups);
-          setDayData(prev => ({
-            ...prev,
-            meals: groups,
-            nutrients: {
-              calories: { ...prev.nutrients.calories, amount: totals.calories },
-              protein: { ...prev.nutrients.protein, amount: totals.protein },
-              carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-              fat: { ...prev.nutrients.fat, amount: totals.fat }
-            }
-          }));
-        }
-
-        toast({
-          title: "הארוחה נערכה בהצלחה"
-        });
-      } else {
-        // הוספת ארוחה חדשה
-        const mealGroupId = await getOrCreateMealGroup(dateStr);
-        await addMealToGroup(mealGroupId, mealData);
-
-        // Refresh meals data
-        const groups = await getMealsForDate(dateStr);
-        if (groups.length > 0) {
         const totals = calculateTotalNutrients(groups);
         setDayData(prev => ({
           ...prev,
@@ -160,7 +125,28 @@ const HomePage = () => {
             fat: { ...prev.nutrients.fat, amount: totals.fat }
           }
         }));
-        }
+
+        toast({
+          title: "הארוחה נערכה בהצלחה"
+        });
+      } else {
+        // הוספת ארוחה חדשה
+        const mealGroupId = await getOrCreateMealGroup(dateStr);
+        await addMealToGroup(mealGroupId, mealData);
+
+        // Refresh meals data
+        const groups = await getMealsForDate(dateStr);
+        const totals = calculateTotalNutrients(groups);
+        setDayData(prev => ({
+          ...prev,
+          meals: groups,
+          nutrients: {
+            calories: { ...prev.nutrients.calories, amount: totals.calories },
+            protein: { ...prev.nutrients.protein, amount: totals.protein },
+            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+            fat: { ...prev.nutrients.fat, amount: totals.fat }
+          }
+        }));
 
         toast({
           title: "הארוחה נוספה בהצלחה"
