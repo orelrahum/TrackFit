@@ -1,13 +1,14 @@
 
-import { CircleChevronLeft, CircleChevronRight } from "lucide-react";
+import { CircleChevronLeft, CircleChevronRight, Calendar } from "lucide-react";
 
 interface DateNavigationProps {
   currentDate: Date;
   onPrevDay: () => void;
   onNextDay: () => void;
+  onTodayClick: () => void;
 }
 
-const DateNavigation = ({ currentDate, onPrevDay, onNextDay }: DateNavigationProps) => {
+const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: DateNavigationProps) => {
   // Hebrew options for date formatting
   const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
@@ -15,8 +16,31 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay }: DateNavigationPro
     month: 'long',
   };
   
-  // Format the date in Hebrew
-  const formattedDate = new Intl.DateTimeFormat('he-IL', options).format(currentDate);
+  const getDisplayDate = (date: Date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    // Reset time portions for accurate date comparison
+    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const compareToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const compareTomorrow = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
+    const compareYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+
+    if (compareDate.getTime() === compareToday.getTime()) {
+      return "היום";
+    } else if (compareDate.getTime() === compareTomorrow.getTime()) {
+      return "מחר";
+    } else if (compareDate.getTime() === compareYesterday.getTime()) {
+      return "אתמול";
+    } else {
+      return new Intl.DateTimeFormat('he-IL', options).format(date);
+    }
+  };
+
+  const displayDate = getDisplayDate(currentDate);
   
   return (
     <div className="flex items-center justify-between w-full px-4 py-2">
@@ -28,7 +52,16 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay }: DateNavigationPro
         <CircleChevronRight className="h-6 w-6" />
       </button>
       
-      <h2 className="text-xl font-bold">{formattedDate}</h2>
+      <div className="flex items-center gap-2">
+        <h2 className="text-xl font-bold">{displayDate}</h2>
+        <button
+          onClick={onTodayClick}
+          className="p-1 rounded-full hover:bg-gray-100"
+          aria-label="חזור להיום"
+        >
+          <Calendar className="h-5 w-5" />
+        </button>
+      </div>
       
       <button 
         onClick={onNextDay}

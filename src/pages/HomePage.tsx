@@ -39,6 +39,10 @@ const HomePage = () => {
     setCurrentDate(nextDay);
   };
 
+  const handleTodayClick = () => {
+    setCurrentDate(new Date());
+  };
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>(undefined);
 
@@ -234,7 +238,8 @@ const HomePage = () => {
           <DateNavigation 
             currentDate={currentDate} 
             onPrevDay={handlePrevDay} 
-            onNextDay={handleNextDay} 
+            onNextDay={handleNextDay}
+            onTodayClick={handleTodayClick}
           />
           
           <div className="space-y-6">
