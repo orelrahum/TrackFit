@@ -108,7 +108,9 @@ export async function getMealsForDate(date: string) {
     throw new Error(`Error fetching meals: ${error.message}. Date: ${date}, User ID: ${userId}`)
   }
 
-  return mealGroups || []
+  // Filter out meal groups with no meals
+  const nonEmptyGroups = mealGroups?.filter(group => group.meals && group.meals.length > 0) || []
+  return nonEmptyGroups
 }
 
 /**
@@ -133,6 +135,50 @@ export async function updateMeal(mealId: string, meal: Partial<Meal>) {
   if (error) {
     console.error('Update error details:', error)
     throw new Error(`Error updating meal: ${error.message}`)
+  }
+}
+
+/**
+ * Checks for and deletes meal groups that have no meals
+ */
+export async function deleteEmptyMealGroups(date: string) {
+  const userId = await getCurrentUserId()
+
+  // Get all meal groups for this date
+  const { data: groups, error: fetchError } = await supabase
+    .from('meal_groups')
+    .select('id')
+    .eq('date', date)
+    .eq('user_id', userId)
+
+  if (fetchError || !groups) {
+    console.error('Error finding meal groups:', fetchError)
+    return
+  }
+
+  // For each group, check if it has any meals
+  for (const group of groups) {
+    const { count, error: countError } = await supabase
+      .from('meals')
+      .select('id', { count: 'exact' })
+      .eq('meal_group_id', group.id)
+
+    if (countError) {
+      console.error('Error counting meals:', countError)
+      continue
+    }
+
+    // If group has no meals, delete it
+    if (count === 0) {
+      const { error: deleteError } = await supabase
+        .from('meal_groups')
+        .delete()
+        .eq('id', group.id)
+
+      if (deleteError) {
+        console.error('Error deleting empty meal group:', deleteError)
+      }
+    }
   }
 }
 

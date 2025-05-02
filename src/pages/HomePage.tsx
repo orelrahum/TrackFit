@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal } from "@/lib/meal-service";
+import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups } from "@/lib/meal-service";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
@@ -177,11 +177,15 @@ const HomePage = () => {
 
   const handleDeleteMeal = async (id: string) => {
     try {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      
       // Delete from Supabase
       await deleteMeal(id);
       
+      // Delete empty meal groups
+      await deleteEmptyMealGroups(dateStr);
+      
       // Refresh data from server
-      const dateStr = currentDate.toISOString().split('T')[0];
       const groups = await getMealsForDate(dateStr);
       const totals = calculateTotalNutrients(groups);
       
