@@ -15,8 +15,8 @@ interface MealListProps {
 
 const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: MealListProps) => {
   return (
-    <div className="bg-white rounded-lg">
-      <div className="p-4 border-b border-gray-100">
+    <div className="bg-card rounded-lg">
+      <div className="p-4 border-b">
         <h2 className="text-lg font-semibold">הארוחות שלי</h2>
       </div>
       
@@ -24,8 +24,8 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: M
         {meals.length > 0 ? (
           meals.map((mealGroup) => (
             <div key={mealGroup.id} className="mb-4">
-              <div className="p-3 bg-gray-50 border-b border-gray-200">
-                <h3 className="font-medium text-gray-700">{mealGroup.name}</h3>
+              <div className="p-3 bg-muted border-b">
+                <h3 className="font-medium text-foreground">{mealGroup.name}</h3>
               </div>
               {mealGroup.meals.map((meal) => (
                 <MealItem 
@@ -38,13 +38,13 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: M
             </div>
           ))
         ) : (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-muted-foreground">
             <p>אין ארוחות מתועדות להיום</p>
           </div>
         )}
       </div>
       
-      <div className="p-4 flex justify-between border-t border-gray-100">
+      <div className="p-4 flex justify-between border-t">
         <Button
           variant="outline"
           className="flex items-center"

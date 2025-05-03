@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
+import { ThemeProvider } from "./context/ThemeContext"
 import { ProtectedRoute } from "./components/auth/ProtectedRoute"
 import HomePage from "./pages/HomePage"
 import NotFound from "./pages/NotFound"
@@ -26,7 +27,8 @@ const App = () => {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TooltipProvider>
+          <ThemeProvider>
+            <TooltipProvider>
             <Toaster />
             <Sonner />
             <Header /> {/* Render the Header component here */}
@@ -51,7 +53,8 @@ const App = () => {
               {/* Not Found */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </TooltipProvider>
+            </TooltipProvider>
+          </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>

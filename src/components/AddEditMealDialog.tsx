@@ -241,7 +241,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                     <span>{selectedFood.name_he}</span>
                   </div>
                 ) : (
-                  <span className="text-gray-500">בחר מאכל</span>
+                  <span className="text-muted-foreground">בחר מאכל</span>
                 )}
                 <span className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                   <svg
@@ -263,7 +263,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               
               {comboboxOpen && (
                 <div className="absolute z-50 w-full mt-1">
-                  <div className="bg-white border rounded-lg shadow-lg">
+                  <div className="bg-card border rounded-lg shadow-lg">
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -280,18 +280,18 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                     />
                     <div className="max-h-[300px] overflow-y-auto">
                       {loading ? (
-                        <div className="p-2 text-center text-gray-500" role="status">
+                        <div className="p-2 text-center text-muted-foreground" role="status">
                           <div className="inline-block animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full ml-2" />
                           טוען נתונים...
                         </div>
                       ) : !searchResults.length ? (
-                        <div className="p-2 text-center text-gray-500">לא נמצאו תוצאות</div>
+                        <div className="p-2 text-center text-muted-foreground">לא נמצאו תוצאות</div>
                       ) : (
                         searchResults.map(food => (
                           <button
                             key={food.id}
                             type="button"
-                            className="w-full text-right px-3 py-2 hover:bg-gray-100 border-b last:border-0 flex items-center gap-2"
+                            className="w-full text-right px-3 py-2 hover:bg-muted border-b last:border-0 flex items-center gap-2"
                             onClick={() => handleFoodSelect(food)}
                           >
                             {food.image_url && (
@@ -306,7 +306,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                             )}
                             <div className="flex-1">
                               <div className="font-medium">{food.name_he}</div>
-                              <div className="text-sm text-gray-500">{food.calories} קק"ל ל-100 גרם</div>
+                              <div className="text-sm text-muted-foreground">{food.calories} קק"ל ל-100 גרם</div>
                             </div>
                           </button>
                         ))
@@ -353,13 +353,13 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>קלוריות</Label>
-                  <div className="p-2 bg-gray-50 rounded-md">
+                  <div className="p-2 bg-muted rounded-md">
                     {Math.round(formData.calories || 0)}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>חלבון (גרם)</Label>
-                  <div className="p-2 bg-gray-50 rounded-md">
+                  <div className="p-2 bg-muted rounded-md">
                     {Math.round(formData.protein || 0)}
                   </div>
                 </div>
@@ -368,13 +368,13 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>פחמימות (גרם)</Label>
-                  <div className="p-2 bg-gray-50 rounded-md">
+                  <div className="p-2 bg-muted rounded-md">
                     {Math.round(formData.carbs || 0)}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>שומן (גרם)</Label>
-                  <div className="p-2 bg-gray-50 rounded-md">
+                  <div className="p-2 bg-muted rounded-md">
                     {Math.round(formData.fat || 0)}
                   </div>
                 </div>

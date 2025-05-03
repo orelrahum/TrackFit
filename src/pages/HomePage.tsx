@@ -197,7 +197,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 pt-8 pb-8"> {/* Adjusted padding top */}
+      <div className="min-h-screen bg-background pt-8 pb-8"> {/* Adjusted padding top */}
         {/* Header is now handled globally in App.tsx */}
         <main className="container mx-auto px-4">
           <DateNavigation 

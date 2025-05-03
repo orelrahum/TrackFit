@@ -25,6 +25,28 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
   }
+
+  .dark {
+    --background: 220 10% 18%;
+    --foreground: 220 10% 98%;
+    --card: 220 10% 22%;
+    --card-foreground: 220 10% 98%;
+    --popover: 220 10% 22%;
+    --popover-foreground: 220 10% 98%;
+    --primary: 220 10% 98%;
+    --primary-foreground: 220 10% 18%;
+    --secondary: 220 10% 26%;
+    --secondary-foreground: 220 10% 98%;
+    --muted: 220 10% 26%;
+    --muted-foreground: 220 10% 70%;
+    --accent: 220 10% 26%;
+    --accent-foreground: 220 10% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 220 10% 98%;
+    --border: 220 10% 26%;
+    --input: 220 10% 26%;
+    --ring: 220 10% 70%;
+  }
 }
 
 html {
@@ -93,30 +115,23 @@ html {
   }
 }
 
-.progress-bar {
-  @apply h-6 bg-gray-200 rounded-full relative overflow-hidden;
-}
-
 .progress-value {
   @apply h-full rounded-full relative transition-all duration-300;
 }
 
-.progress-percentage {
-  @apply absolute inset-0 flex items-center justify-center text-sm font-semibold text-white z-10;
-}
-
+/* Progress bar colors for light mode */
 .bg-progress-calories {
-  @apply bg-blue-500;
+  @apply bg-blue-500 dark:bg-blue-600;
 }
 
 .bg-progress-protein {
-  @apply bg-green-500;
+  @apply bg-green-500 dark:bg-green-600;
 }
 
 .bg-progress-carbs {
-  @apply bg-purple-500;
+  @apply bg-purple-500 dark:bg-purple-600;
 }
 
 .bg-progress-fat {
-  @apply bg-orange-500;
+  @apply bg-orange-500 dark:bg-orange-600;
 }

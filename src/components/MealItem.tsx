@@ -9,9 +9,9 @@ interface MealItemProps {
 
 const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border-b border-gray-100 hover:bg-gray-50">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border-b hover:bg-muted">
       <div className="flex items-center space-x-3 space-x-reverse mb-2 sm:mb-0">
-        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+        <div className="w-12 h-12 rounded-full overflow-hidden bg-muted flex-shrink-0">
           {meal.image_url ? (
             <img 
               src={meal.image_url} 
@@ -33,7 +33,7 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
           <h3 className="font-medium">
             {meal.name}
             {(meal.weight || meal.unit) && (
-              <span className="text-gray-500 text-sm mr-1">
+              <span className="text-muted-foreground text-sm mr-1">
                 {meal.weight && `(${meal.weight}${meal.unit ? ' ' + meal.unit : 'g'})`}
                 {!meal.weight && meal.unit && `(${meal.unit})`}
               </span>
@@ -45,7 +45,7 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
       <div className="flex justify-between sm:justify-end w-full sm:w-auto">
         <div className="text-left">
           <div className="font-semibold">{meal.calories} קק"ל</div>
-          <div className="grid grid-cols-3 gap-x-3 text-xs text-gray-500 sm:flex sm:text-sm sm:space-x-2 sm:space-x-reverse">
+          <div className="grid grid-cols-3 gap-x-3 text-xs text-muted-foreground sm:flex sm:text-sm sm:space-x-2 sm:space-x-reverse">
             <span>חלבון {meal.protein}g</span>
             <span>פחמימות {meal.carbs}g</span>
             <span>שומן {meal.fat}g</span>
@@ -55,7 +55,7 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
         <div className="flex ml-2 sm:ml-4">
           <button 
             onClick={() => onEdit(meal.id)} 
-            className="p-2 text-blue-600 hover:bg-blue-100 rounded-full"
+            className="p-2 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
             aria-label="ערוך ארוחה"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -65,7 +65,7 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
           </button>
           <button 
             onClick={() => onDelete(meal.id)} 
-            className="p-2 text-red-600 hover:bg-red-100 rounded-full"
+            className="p-2 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
             aria-label="מחק ארוחה"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

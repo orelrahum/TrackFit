@@ -1,8 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import LogoText from '/Logo/LogoText.png'; // Assuming Logo is in public or accessible path
-import SymbolLogo from '/Logo/Symbol.png'; // Assuming Logo is in public or accessible path
+import { Button } from "@/components/ui/button";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import LogoText from '/Logo/LogoText.png';
+import SymbolLogo from '/Logo/Symbol.png';
 
 const Header = () => {
   const { signOut } = useAuth();
@@ -31,7 +34,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm py-4 mb-6 sticky top-0 z-50">
+    <header className="bg-background shadow-sm py-4 mb-6 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           {/* Logos Centered */}
@@ -40,11 +43,12 @@ const Header = () => {
             <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
           </div>
 
-          {/* Sign Out Button */}
-          <div className="flex items-center">
+          {/* Theme Toggle and Sign Out Buttons */}
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
             <button
               onClick={handleSignOut}
-              className="px-3 py-1 text-sm text-red-600 hover:text-red-800 font-medium rounded-md hover:bg-red-50 transition-colors"
+              className="px-3 py-1 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
             >
               התנתק
             </button>
@@ -52,6 +56,25 @@ const Header = () => {
         </div>
       </div>
     </header>
+  );
+};
+
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? (
+        <Sun className="h-5 w-5 ml-2" />
+      ) : (
+        <Moon className="h-5 w-5 ml-2" />
+      )}
+    </Button>
   );
 };
 

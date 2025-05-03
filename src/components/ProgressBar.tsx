@@ -16,14 +16,14 @@ const ProgressBar = ({ current, max, label, valueLabel, colorClass }: ProgressBa
     <div className="mb-4">
       <div className="flex justify-between mb-1 text-sm">
         <span className="font-semibold text-right">{label}</span>
-        <span className="text-gray-600 text-left">{valueLabel}</span>
+        <span className="text-muted-foreground text-left">{valueLabel}</span>
       </div>
-      <div className="progress-bar">
+      <div className="h-6 bg-muted rounded-full relative overflow-hidden">
         <div 
           className={cn("progress-value", colorClass)} 
           style={{ width: `${percentage}%` }}
         >
-          <div className="progress-percentage">
+          <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-primary-foreground">
             {percentage}%
           </div>
         </div>
