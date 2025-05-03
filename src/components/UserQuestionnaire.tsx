@@ -107,8 +107,8 @@ export default function UserQuestionnaire() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50" dir="rtl">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-background" dir="rtl">
+      <Card className="w-full max-w-md bg-card">
         <CardHeader>
           <CardTitle className="text-2xl text-center">שאלון משתמש חדש</CardTitle>
         </CardHeader>

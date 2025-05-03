@@ -98,6 +98,58 @@ html {
   padding: 0.5rem;
   border-radius: var(--radius);
   border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+}
+
+.dark .auth-input {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.dark .auth-input:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.2);
+}
+
+.dark [data-supabase-auth-form] label {
+  color: hsl(220 10% 98%);
+  font-weight: 500;
+}
+
+.dark [data-supabase-auth-form] [data-input] {
+  background-color: hsl(220 10% 22%);
+  border-color: hsl(220 10% 30%);
+  color: hsl(220 10% 98%);
+}
+
+.dark [data-supabase-auth-form] [data-input]::placeholder {
+  color: hsl(220 10% 70%);
+}
+
+.dark [data-supabase-auth-form] [data-button] {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.dark [data-supabase-auth-form] [data-button]:hover {
+  background-color: #2563eb;
+}
+
+.dark [data-supabase-auth-form] a {
+  color: hsl(220 10% 80%);
+}
+
+.dark [data-supabase-auth-form] a:hover {
+  color: hsl(220 10% 98%);
 }
 
 .auth-button {

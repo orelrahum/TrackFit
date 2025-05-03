@@ -8,12 +8,12 @@ interface TargetSummaryProps {
 
 export function TargetSummary({ profile, targets }: TargetSummaryProps) {
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-card">
       <CardContent className="p-6">
         <h2 className="text-2xl font-bold mb-6 text-center">היעדים היומיים שלך</h2>
         
         <div className="space-y-6">
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted p-4 rounded-lg">
             <h3 className="font-semibold mb-2">יעדים תזונתיים:</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -35,7 +35,7 @@ export function TargetSummary({ profile, targets }: TargetSummaryProps) {
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted p-4 rounded-lg">
             <h3 className="font-semibold mb-2">פרטי משקל:</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -53,7 +53,7 @@ export function TargetSummary({ profile, targets }: TargetSummaryProps) {
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-muted p-4 rounded-lg">
             <h3 className="font-semibold mb-2">פרטים נוספים:</h3>
             <div className="space-y-2">
               <div className="flex justify-between">

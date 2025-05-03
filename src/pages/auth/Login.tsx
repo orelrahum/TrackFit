@@ -51,8 +51,8 @@ export default function Login() {
   }, [toast])
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background auth-container" dir="rtl">
-      <Card className="w-full max-w-md auth-form">
+    <div className="flex items-center justify-center min-h-screen bg-background auth-container pt-8 pb-8" dir="rtl">
+      <Card className="w-full max-w-md auth-form bg-card">
         <CardHeader>
           <CardTitle className="text-2xl text-center">ברוכים הבאים ל-TrackFit</CardTitle>
         </CardHeader>
@@ -72,10 +72,19 @@ export default function Login() {
                 },
                 dark: {
                   colors: {
-                    brand: 'hsl(var(--primary))',
-                    brandAccent: 'hsl(var(--primary-foreground))',
-                    inputBackground: 'hsl(var(--muted))',
-                    inputText: 'hsl(var(--foreground))',
+                    brand: '#3b82f6',
+                    brandAccent: '#60a5fa',
+                    inputBackground: 'hsl(220 10% 22%)',
+                    inputBorder: 'hsl(220 10% 30%)',
+                    inputText: 'hsl(220 10% 98%)',
+                    inputPlaceholder: 'hsl(220 10% 70%)',
+                    defaultButtonBackground: '#4f46e5',
+                    defaultButtonBackgroundHover: '#4338ca',
+                    defaultButtonText: 'white',
+                    defaultButtonBorder: 'transparent',
+                    anchorTextColor: 'hsl(220 10% 80%)',
+                    anchorTextHoverColor: 'hsl(220 10% 98%)',
+                    dividerBackground: 'hsl(220 10% 30%)',
                   },
                 },
               },
