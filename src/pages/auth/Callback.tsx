@@ -1,15 +1,32 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { getUserProfile } from '@/lib/target-service'
 
 export default function Callback() {
   const { user } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (user) {
-      navigate('/', { replace: true })
+    const checkUserProfile = async () => {
+      if (user) {
+        try {
+          const profile = await getUserProfile(user.id)
+          if (!profile) {
+            // משתמש חדש - הפניה לשאלון
+            navigate('/questionnaire', { replace: true })
+          } else {
+            // משתמש קיים - הפניה לדף הבית
+            navigate('/', { replace: true })
+          }
+        } catch (error) {
+          console.error('Error checking user profile:', error)
+          navigate('/', { replace: true })
+        }
+      }
     }
+
+    checkUserProfile()
   }, [user, navigate])
 
   return (

@@ -1,4 +1,3 @@
-
 export interface Nutrient {
   amount: number;
   target: number;
@@ -54,4 +53,25 @@ export interface DBFoodMeasurementUnit {
   food_id: string;
   unit: string;
   grams: number;
+}
+
+export interface UserProfile {
+  id: string;
+  height: number;
+  weight: number;
+  target_weight: number;
+  age: number;
+  gender: 'male' | 'female';
+  activity_level: 'sedentary' | 'light' | 'moderate' | 'active';
+  weight_goal: 'loss' | 'gain' | 'maintain';
+  weight_rate: 0.25 | 0.5; // קצב שינוי משקל בק"ג לשבוע
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface UserTargets {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
 }

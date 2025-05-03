@@ -1,49 +1,93 @@
-
-import { Nutrients } from "@/types";
-import ProgressBar from "./ProgressBar";
+import { Nutrients } from "@/types"
+import ProgressBar from "./ProgressBar"
+import { useUserTargets } from "@/hooks/use-user-targets"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface DailySummaryProps {
-  nutrients: Nutrients;
+  nutrients: {
+    calories: { amount: number };
+    protein: { amount: number };
+    carbs: { amount: number };
+    fat: { amount: number };
+  }
 }
 
 const DailySummary = ({ nutrients }: DailySummaryProps) => {
-  const { calories, protein, carbs, fat } = nutrients;
+  const { targets, isLoading, error } = useUserTargets()
   
+  if (isLoading) {
+    return (
+      <div className="p-4 bg-white rounded-lg mb-4 space-y-4">
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-6 w-full" />
+      </div>
+    )
+  }
+
+  if (error || !targets) {
+    console.error('Target loading error:', error)
+    // מקרה של שגיאה: נציג לפחות את הערכים הנוכחיים בלי היעדים
+    return (
+      <div className="p-4 bg-white rounded-lg mb-4">
+        <div className="text-center text-red-500 mb-4">
+          שגיאה בטעינת היעדים היומיים. מציג ערכים נוכחיים בלבד.
+        </div>
+        <div className="space-y-4">
+          <div>קלוריות: {nutrients.calories.amount}</div>
+          <div>חלבון: {nutrients.protein.amount} גרם</div>
+          <div>פחמימות: {nutrients.carbs.amount} גרם</div>
+          <div>שומן: {nutrients.fat.amount} גרם</div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!targets.calories || !targets.protein || !targets.carbs || !targets.fat) {
+    console.error('Invalid target values:', targets)
+    return (
+      <div className="p-4 bg-white rounded-lg mb-4 text-center text-red-500">
+        שגיאה: ערכי היעדים אינם תקינים
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 bg-white rounded-lg mb-4">
       <ProgressBar 
-        current={calories.amount}
-        max={calories.target}
+        current={nutrients.calories.amount}
+        max={targets.calories}
         label="קלוריות"
-        valueLabel={`${calories.amount} / ${calories.target} קק"ל`}
+        valueLabel={`${nutrients.calories.amount} / ${targets.calories} קק"ל`}
         colorClass="bg-progress-calories"
       />
       
       <ProgressBar 
-        current={protein.amount}
-        max={protein.target}
+        current={nutrients.protein.amount}
+        max={targets.protein}
         label="חלבון"
-        valueLabel={`${protein.amount} / ${protein.target} גרם`}
+        valueLabel={`${nutrients.protein.amount} / ${targets.protein} גרם`}
         colorClass="bg-progress-protein"
       />
       
       <ProgressBar 
-        current={carbs.amount}
-        max={carbs.target}
+        current={nutrients.carbs.amount}
+        max={targets.carbs}
         label="פחמימות"
-        valueLabel={`${carbs.amount} / ${carbs.target} גרם`}
+        valueLabel={`${nutrients.carbs.amount} / ${targets.carbs} גרם`}
         colorClass="bg-progress-carbs"
       />
       
       <ProgressBar 
-        current={fat.amount}
-        max={fat.target}
+        current={nutrients.fat.amount}
+        max={targets.fat}
         label="שומן"
-        valueLabel={`${fat.amount} / ${fat.target} גרם`}
+        valueLabel={`${nutrients.fat.amount} / ${targets.fat} גרם`}
         colorClass="bg-progress-fat"
       />
     </div>
-  );
-};
+  )
+}
 
-export default DailySummary;
+export default DailySummary

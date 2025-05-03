@@ -19,10 +19,10 @@ const HomePage = () => {
   const [dayData, setDayData] = useState<DayData>({
     date: currentDate.toISOString().split('T')[0],
     nutrients: {
-      calories: { amount: 0, target: 2000 },
-      protein: { amount: 0, target: 150 },
-      carbs: { amount: 0, target: 250 },
-      fat: { amount: 0, target: 70 }
+      calories: { amount: 0, target: 0 },
+      protein: { amount: 0, target: 0 },
+      carbs: { amount: 0, target: 0 },
+      fat: { amount: 0, target: 0 }
     },
     meals: []
   });
