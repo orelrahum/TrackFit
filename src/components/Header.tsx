@@ -36,8 +36,8 @@ const Header = () => {
         <div className="flex justify-between items-center">
           {/* Logos Centered */}
           <div className="flex-1 flex justify-center items-center">
-            <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
             <img src={LogoText} alt="TrackFit Logo" className="h-8" />
+            <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
           </div>
 
           {/* Sign Out Button */}
