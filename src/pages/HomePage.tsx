@@ -197,43 +197,8 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 pb-8">
-        <header className="bg-white shadow-sm py-4 mb-6">
-          <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center">
-              <div className="text-xl font-bold text-blue-600">TrackFit</div>
-              <div className="flex items-center gap-4">
-                <div className="text-sm text-gray-600">מעקב תזונה יומי</div>
-                <button
-                  onClick={async () => {
-                    try {
-                      const { error } = await signOut();
-                      if (error) {
-                        toast({
-                          title: "שגיאה בהתנתקות",
-                          description: error.message,
-                          variant: "destructive",
-                        });
-                      } else {
-                        navigate("/auth/login", { replace: true });
-                      }
-                    } catch (err) {
-                      toast({
-                        title: "שגיאה בהתנתקות",
-                        description: "אנא נסה שוב",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                  className="px-3 py-1 text-sm text-red-600 hover:text-red-800 font-medium rounded-md hover:bg-red-50 transition-colors"
-                >
-                  התנתק
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
+      <div className="min-h-screen bg-gray-50 pt-8 pb-8"> {/* Adjusted padding top */}
+        {/* Header is now handled globally in App.tsx */}
         <main className="container mx-auto px-4">
           <DateNavigation 
             currentDate={currentDate} 

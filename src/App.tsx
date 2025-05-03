@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound"
 import Login from "./pages/auth/Login"
 import Callback from "./pages/auth/Callback"
 import UserQuestionnaire from "./components/UserQuestionnaire"
+import Header from "./components/Header" // Import the Header component
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
+            <Header /> {/* Render the Header component here */}
             <Routes>
               {/* Public Routes */}
               <Route path="/auth/login" element={<Login />} />

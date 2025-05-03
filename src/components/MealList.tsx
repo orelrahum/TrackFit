@@ -54,7 +54,7 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: M
         </Button>
         
         <Button
-          className="flex items-center bg-blue-600 hover:bg-blue-700"
+          className="flex items-center bg-red-600 hover:bg-red-700 text-white" // Changed background to red and ensured text is white
           onClick={onAddMeal}
         >
           <Plus className="h-4 w-4 ml-1" />
