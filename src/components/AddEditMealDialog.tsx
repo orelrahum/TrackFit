@@ -28,7 +28,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     carbs: meal?.carbs || 0,
     fat: meal?.fat || 0,
     weight: meal?.weight || 0,
-    unit: meal?.unit || "גרם",
+    unit: meal?.unit || "גרמים",
     food_id: meal?.food_id,
     image_url: meal?.image_url
   });
@@ -80,7 +80,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
         carbs: meal?.carbs || 0,
         fat: meal?.fat || 0,
         weight: meal?.weight || 0,
-        unit: meal?.unit || "גרם",
+        unit: meal?.unit || "גרמים",
         food_id: meal?.food_id,
         image_url: meal?.image_url
       });
@@ -131,17 +131,17 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
   const handleFoodSelect = (food: DBFood) => {
     setSelectedFood(food);
     
-    // Always default to גרם if available, otherwise use first available unit
-    let defaultUnit = "גרם";
+    // Always default to גרמים if available, otherwise use first available unit
+    let defaultUnit = "גרמים";
     if (food.food_measurement_units) {
-      const hasGrams = food.food_measurement_units.some(mu => mu.unit === "גרם");
+      const hasGrams = food.food_measurement_units.some(mu => mu.unit === "גרמים");
       if (!hasGrams && food.food_measurement_units.length > 0) {
         defaultUnit = food.food_measurement_units[0].unit;
       }
     }
 
     try {
-      const defaultWeight = defaultUnit === "גרם" ? 100 : 1;
+      const defaultWeight = defaultUnit === "גרמים" ? 100 : 1;
       const nutritionValues = calculateNutrition(food, defaultWeight, defaultUnit);
       setFormData({
         name: food.name_he,
@@ -154,7 +154,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     } catch (error) {
       console.error('Error calculating nutrition:', error);
       // Set safe default values if calculation fails
-      const defaultWeight = defaultUnit === "גרם" ? 100 : 1;
+      const defaultWeight = defaultUnit === "גרמים" ? 100 : 1;
       setFormData({
         name: food.name_he,
         unit: defaultUnit,
@@ -173,7 +173,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     if (!selectedFood || !amount) return;
     
     try {
-      const nutritionValues = calculateNutrition(selectedFood, amount, formData.unit || "גרם");
+      const nutritionValues = calculateNutrition(selectedFood, amount, formData.unit || "גרמים");
       setFormData(prev => ({
         ...prev,
         weight: amount,
@@ -193,7 +193,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     if (!selectedFood || !unit) return;
     
     // Set default weight based on unit
-    const newWeight = unit === "גרם" ? 100 : 1;
+    const newWeight = unit === "גרמים" ? 100 : 1;
     
     try {
       const nutritionValues = calculateNutrition(selectedFood, newWeight, unit);
@@ -360,7 +360,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
                             )}
                             <div className="flex-1 text-right">
                               <div className="font-medium">{food.name_he}</div>
-                              <div className="text-sm text-muted-foreground">{food.calories} קק"ל ל-100 גרם</div>
+                              <div className="text-sm text-muted-foreground">{food.calories} קק"ל ל-100 גרמים</div>
                             </div>
                           </button>
                         ))
@@ -393,7 +393,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
                     onValueChange={handleUnitChange}
                   >
                     <SelectTrigger className="flex flex-row-reverse justify-between">
-                      <SelectValue defaultValue="גרם" />
+                      <SelectValue defaultValue="גרמים" />
                     </SelectTrigger>
                     <SelectContent align="end" className="w-full min-w-[200px]" dir="rtl">
                       <div className="flex flex-col">
@@ -416,7 +416,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>חלבון (גרם)</Label>
+                  <Label>חלבון (גרמים)</Label>
                   <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.protein || 0)}
                   </div>
@@ -425,13 +425,13 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>פחמימות (גרם)</Label>
+                  <Label>פחמימות (גרמים)</Label>
                   <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.carbs || 0)}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>שומן (גרם)</Label>
+                  <Label>שומן (גרמים)</Label>
                   <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.fat || 0)}
                   </div>

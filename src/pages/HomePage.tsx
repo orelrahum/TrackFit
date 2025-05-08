@@ -213,9 +213,9 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-background pt-8 pb-8"> {/* Adjusted padding top */}
+      <div className="h-screen w-screen bg-background">
         {/* Header is now handled globally in App.tsx */}
-        <main className="container mx-auto px-4">
+        <main className="p-6 h-screen">
           <DateNavigation 
             currentDate={currentDate} 
             onPrevDay={handlePrevDay} 
@@ -223,16 +223,20 @@ const HomePage = () => {
             onTodayClick={handleTodayClick}
           />
           
-          <div className="space-y-6">
-            <DailySummary nutrients={dayData.nutrients} />
-            <MealList 
-              meals={dayData.meals}
-              onAddMeal={handleAddMeal}
-              onAddWithAI={handleAddWithAI}
-              onEditMeal={handleEditMeal}
-              onDeleteMeal={handleDeleteMeal}
-              onEditGroup={handleEditMealGroup}
-            />
+          <div className="space-y-6 md:space-y-0 md:flex md:gap-6 w-full mt-6">
+            <div className="md:w-2/3">
+              <MealList
+                meals={dayData.meals}
+                onAddMeal={handleAddMeal}
+                onAddWithAI={handleAddWithAI}
+                onEditMeal={handleEditMeal}
+                onDeleteMeal={handleDeleteMeal}
+                onEditGroup={handleEditMealGroup}
+              />
+            </div>
+            <div className="md:w-1/3">
+              <DailySummary nutrients={dayData.nutrients} />
+            </div>
           </div>
         </main>
       </div>
