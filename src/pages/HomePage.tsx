@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup } from "@/lib/meal-service";
+import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup, deleteMealGroup } from "@/lib/meal-service";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
@@ -172,6 +172,42 @@ const HomePage = () => {
     }
   };
 
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      
+      // Delete the group and its meals
+      await deleteMealGroup(groupId);
+      
+      // Refresh data from server
+      const groups = await getMealsForDate(dateStr);
+      const totals = calculateTotalNutrients(groups);
+      
+      setDayData(prev => ({
+        ...prev,
+        meals: groups,
+        nutrients: {
+          calories: { ...prev.nutrients.calories, amount: totals.calories },
+          protein: { ...prev.nutrients.protein, amount: totals.protein },
+          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+          fat: { ...prev.nutrients.fat, amount: totals.fat }
+        }
+      }));
+    
+      toast({
+        title: "הקבוצה נמחקה בהצלחה",
+        description: "הערכים התזונתיים עודכנו בהתאם",
+      });
+    } catch (error) {
+      console.error('Error deleting meal group:', error);
+      toast({
+        title: "שגיאה במחיקת הקבוצה",
+        description: "אנא נסה שוב",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDeleteMeal = async (id: string) => {
     try {
       const dateStr = currentDate.toISOString().split('T')[0];
@@ -232,6 +268,7 @@ const HomePage = () => {
                 onEditMeal={handleEditMeal}
                 onDeleteMeal={handleDeleteMeal}
                 onEditGroup={handleEditMealGroup}
+                onDeleteGroup={handleDeleteGroup}
               />
             </div>
             <div className="md:w-1/3">

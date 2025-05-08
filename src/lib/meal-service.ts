@@ -239,3 +239,30 @@ export async function updateMealGroup(groupId: string, data: { name: string }) {
     throw new Error(`Error updating meal group: ${error.message}`)
   }
 }
+
+/**
+ * Deletes a meal group and all its associated meals
+ */
+export async function deleteMealGroup(groupId: string) {
+  // First, delete all meals in the group
+  const { error: mealsError } = await supabase
+    .from('meals')
+    .delete()
+    .eq('meal_group_id', groupId)
+
+  if (mealsError) {
+    console.error('Error deleting meals:', mealsError)
+    throw new Error(`Error deleting meals: ${mealsError.message}`)
+  }
+
+  // Then delete the group itself
+  const { error: groupError } = await supabase
+    .from('meal_groups')
+    .delete()
+    .eq('id', groupId)
+
+  if (groupError) {
+    console.error('Error deleting meal group:', groupError)
+    throw new Error(`Error deleting meal group: ${groupError.message}`)
+  }
+}

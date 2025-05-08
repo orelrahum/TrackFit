@@ -2,7 +2,17 @@
 import { useState } from "react";
 import { MealGroup, Meal } from "@/types";
 import MealItem from "./MealItem";
-import { Plus, Pencil } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,11 +25,13 @@ interface MealListProps {
   onEditMeal: (id: string) => void;
   onDeleteMeal: (id: string) => void;
   onEditGroup?: (groupId: string, data: { name: string }) => void;
+  onDeleteGroup?: (groupId: string) => void;
 }
 
-const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onEditGroup }: MealListProps) => {
+const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onEditGroup, onDeleteGroup }: MealListProps) => {
   const [editingGroup, setEditingGroup] = useState<MealGroup | null>(null);
   const [editedGroupName, setEditedGroupName] = useState("");
+  const [groupToDelete, setGroupToDelete] = useState<MealGroup | null>(null);
   return (
     <div className="bg-card rounded-lg h-full flex flex-col">
       <div className="p-4 border-b flex-none">
@@ -32,18 +44,29 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
             <div key={mealGroup.id} className="mb-4">
               <div className="p-3 bg-muted border-b flex justify-between items-center">
                 <h3 className="font-medium text-foreground">{mealGroup.name}</h3>
-                {onEditGroup && (
-                  <button
-                    onClick={() => {
-                      setEditingGroup(mealGroup);
-                      setEditedGroupName(mealGroup.name);
-                    }}
-                    className="p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
-                    aria-label="ערוך שם קבוצה"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                )}
+                <div className="flex gap-1">
+                  {onEditGroup && (
+                    <button
+                      onClick={() => {
+                        setEditingGroup(mealGroup);
+                        setEditedGroupName(mealGroup.name);
+                      }}
+                      className="p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
+                      aria-label="ערוך שם קבוצה"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                  )}
+                  {onDeleteGroup && (
+                    <button
+                      onClick={() => setGroupToDelete(mealGroup)}
+                      className="p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
+                      aria-label="מחק קבוצה"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               {mealGroup.meals.map((meal) => (
                 <MealItem 
@@ -113,6 +136,31 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!groupToDelete} onOpenChange={() => setGroupToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>האם למחוק את הקבוצה?</AlertDialogTitle>
+            <AlertDialogDescription>
+              פעולה זו תמחק את הקבוצה "{groupToDelete?.name}" וכל הארוחות שבה. פעולה זו היא בלתי הפיכה.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ביטול</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700 text-white"
+              onClick={() => {
+                if (groupToDelete && onDeleteGroup) {
+                  onDeleteGroup(groupToDelete.id);
+                  setGroupToDelete(null);
+                }
+              }}
+            >
+              מחק
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
