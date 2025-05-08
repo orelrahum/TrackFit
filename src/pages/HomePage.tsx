@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups } from "@/lib/meal-service";
+import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup } from "@/lib/meal-service";
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
@@ -156,6 +156,38 @@ const HomePage = () => {
     }
   };
 
+  const handleEditMealGroup = async (groupId: string, data: { name: string }) => {
+    try {
+      await updateMealGroup(groupId, data);
+      
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const groups = await getMealsForDate(dateStr);
+      const totals = calculateTotalNutrients(groups);
+      
+      setDayData(prev => ({
+        ...prev,
+        meals: groups,
+        nutrients: {
+          calories: { ...prev.nutrients.calories, amount: totals.calories },
+          protein: { ...prev.nutrients.protein, amount: totals.protein },
+          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+          fat: { ...prev.nutrients.fat, amount: totals.fat }
+        }
+      }));
+      
+      toast({
+        title: "שם הקבוצה עודכן בהצלחה"
+      });
+    } catch (error) {
+      console.error('Error updating meal group:', error);
+      toast({
+        title: "שגיאה בעדכון שם הקבוצה",
+        description: "אנא נסה שוב",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDeleteMeal = async (id: string) => {
     try {
       const dateStr = currentDate.toISOString().split('T')[0];
@@ -215,6 +247,7 @@ const HomePage = () => {
               onAddWithAI={handleAddWithAI}
               onEditMeal={handleEditMeal}
               onDeleteMeal={handleDeleteMeal}
+              onEditGroup={handleEditMealGroup}
             />
           </div>
         </main>

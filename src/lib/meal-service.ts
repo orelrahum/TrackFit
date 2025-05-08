@@ -196,3 +196,18 @@ export async function deleteMeal(mealId: string) {
     throw new Error(`Error deleting meal: ${error.message}`)
   }
 }
+
+/**
+ * Updates a meal group's properties
+ */
+export async function updateMealGroup(groupId: string, data: { name: string }) {
+  const { error } = await supabase
+    .from('meal_groups')
+    .update({ name: data.name })
+    .eq('id', groupId)
+
+  if (error) {
+    console.error('Update error details:', error)
+    throw new Error(`Error updating meal group: ${error.message}`)
+  }
+}

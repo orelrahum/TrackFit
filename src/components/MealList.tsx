@@ -2,8 +2,11 @@
 import { useState } from "react";
 import { MealGroup, Meal } from "@/types";
 import MealItem from "./MealItem";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface MealListProps {
   meals: MealGroup[];
@@ -11,9 +14,12 @@ interface MealListProps {
   onAddWithAI: () => void;
   onEditMeal: (id: string) => void;
   onDeleteMeal: (id: string) => void;
+  onEditGroup?: (groupId: string, data: { name: string }) => void;
 }
 
-const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: MealListProps) => {
+const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onEditGroup }: MealListProps) => {
+  const [editingGroup, setEditingGroup] = useState<MealGroup | null>(null);
+  const [editedGroupName, setEditedGroupName] = useState("");
   return (
     <div className="bg-card rounded-lg">
       <div className="p-4 border-b">
@@ -24,8 +30,20 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: M
         {meals.length > 0 ? (
           meals.map((mealGroup) => (
             <div key={mealGroup.id} className="mb-4">
-              <div className="p-3 bg-muted border-b">
+              <div className="p-3 bg-muted border-b flex justify-between items-center">
                 <h3 className="font-medium text-foreground">{mealGroup.name}</h3>
+                {onEditGroup && (
+                  <button
+                    onClick={() => {
+                      setEditingGroup(mealGroup);
+                      setEditedGroupName(mealGroup.name);
+                    }}
+                    className="p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
+                    aria-label="ערוך שם קבוצה"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                )}
               </div>
               {mealGroup.meals.map((meal) => (
                 <MealItem 
@@ -61,6 +79,40 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal }: M
           <span>הוסף ארוחה</span>
         </Button>
       </div>
+
+      <Dialog open={!!editingGroup} onOpenChange={() => setEditingGroup(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>עריכת שם קבוצה</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            if (editingGroup && onEditGroup) {
+              onEditGroup(editingGroup.id, { name: editedGroupName });
+              setEditingGroup(null);
+            }
+          }} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="groupName">שם הקבוצה</Label>
+              <Input
+                id="groupName"
+                value={editedGroupName}
+                onChange={(e) => setEditedGroupName(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end space-x-2 space-x-reverse">
+              <Button type="button" variant="outline" onClick={() => setEditingGroup(null)}>
+                ביטול
+              </Button>
+              <Button type="submit">
+                שמור שינויים
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
