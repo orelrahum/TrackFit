@@ -99,54 +99,38 @@ const HomePage = () => {
     loadMeals();
   }, [currentDate]);
 
-  const handleSaveMeal = async (mealData: Partial<Meal>) => {
+  const handleSaveMeal = async (mealData: Partial<Meal>, groupId: string) => {
     try {
       const dateStr = currentDate.toISOString().split('T')[0];
       
       if (selectedMeal) {
         // עריכת ארוחה קיימת
         await updateMeal(selectedMeal.id, mealData);
-        
-        // Refresh data from server
-        const groups = await getMealsForDate(dateStr);
-        const totals = calculateTotalNutrients(groups);
-        setDayData(prev => ({
-          ...prev,
-          meals: groups,
-          nutrients: {
-            calories: { ...prev.nutrients.calories, amount: totals.calories },
-            protein: { ...prev.nutrients.protein, amount: totals.protein },
-            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-            fat: { ...prev.nutrients.fat, amount: totals.fat }
-          }
-        }));
-
-        toast({
-          title: "הארוחה נערכה בהצלחה"
-        });
       } else {
         // הוספת ארוחה חדשה
-        const mealGroupId = await getOrCreateMealGroup(dateStr);
+        const mealGroupId = groupId === "new" ? 
+          await getOrCreateMealGroup(dateStr) : 
+          groupId;
         await addMealToGroup(mealGroupId, mealData);
-
-        // Refresh meals data
-        const groups = await getMealsForDate(dateStr);
-        const totals = calculateTotalNutrients(groups);
-        setDayData(prev => ({
-          ...prev,
-          meals: groups,
-          nutrients: {
-            calories: { ...prev.nutrients.calories, amount: totals.calories },
-            protein: { ...prev.nutrients.protein, amount: totals.protein },
-            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-            fat: { ...prev.nutrients.fat, amount: totals.fat }
-          }
-        }));
-
-        toast({
-          title: "הארוחה נוספה בהצלחה"
-        });
       }
+
+      // Refresh meals data
+      const groups = await getMealsForDate(dateStr);
+      const totals = calculateTotalNutrients(groups);
+      setDayData(prev => ({
+        ...prev,
+        meals: groups,
+        nutrients: {
+          calories: { ...prev.nutrients.calories, amount: totals.calories },
+          protein: { ...prev.nutrients.protein, amount: totals.protein },
+          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+          fat: { ...prev.nutrients.fat, amount: totals.fat }
+        }
+      }));
+
+      toast({
+        title: selectedMeal ? "הארוחה נערכה בהצלחה" : "הארוחה נוספה בהצלחה"
+      });
     } catch (error) {
       toast({
         title: "שגיאה בשמירת הארוחה",
@@ -258,6 +242,7 @@ const HomePage = () => {
         onClose={() => setIsDialogOpen(false)}
         onSave={handleSaveMeal}
         meal={selectedMeal}
+        currentDate={currentDate.toISOString().split('T')[0]}
       />
     </>
   );

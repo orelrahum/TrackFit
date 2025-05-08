@@ -1,22 +1,26 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { format } from "date-fns";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DBFood, Meal } from "@/types";
+import { DBFood, Meal, MealGroup } from "@/types";
 import { searchFoods, calculateNutrition, getAllFoods } from "@/lib/food-service";
+import { getMealsForDate } from "@/lib/meal-service";
 
 interface AddEditMealDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (meal: Partial<Meal>) => void;
+  onSave: (meal: Partial<Meal>, groupId: string) => void;
   meal?: Meal;
+  currentDate: string;
 }
 
-const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEditMealDialogProps) => {
+const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentDate }: AddEditMealDialogProps) => {
   const [selectedFood, setSelectedFood] = useState<DBFood | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [mealGroups, setMealGroups] = useState<MealGroup[]>([]);
   const [formData, setFormData] = useState<Partial<Meal>>({
     name: meal?.name || "",
     calories: meal?.calories || 0,
@@ -46,12 +50,29 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const loadMealGroups = useCallback(async () => {
+    try {
+      const groups = await getMealsForDate(currentDate);
+      setMealGroups(groups);
+      // If editing an existing meal, find its group
+      if (meal) {
+        const group = groups.find(g => g.meals.some(m => m.id === meal.id));
+        if (group) {
+          setSelectedGroupId(group.id);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading meal groups:', error);
+    }
+  }, [currentDate, meal]);
+
   // Reset states when dialog opens/closes
   useEffect(() => {
     if (dialogOpen) {
       setSearchQuery("");
       setSearchResults([]);
       setSelectedFood(null);
+      setSelectedGroupId("new");
       setFormData({
         name: meal?.name || "",
         calories: meal?.calories || 0,
@@ -63,8 +84,9 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
         food_id: meal?.food_id,
         image_url: meal?.image_url
       });
+      loadMealGroups();
     }
-  }, [dialogOpen, meal]);
+  }, [dialogOpen, meal, loadMealGroups]);
 
   // Load all foods when dropdown is opened
   useEffect(() => {
@@ -194,20 +216,52 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    if (!selectedGroupId && !meal) {
+      // If no group is selected and we're adding a new meal, create a new group
+      onSave(formData, "new");
+    } else {
+      onSave(formData, selectedGroupId);
+    }
     onClose();
   };
 
   return (
     <Dialog open={dialogOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[85vh] min-h-[50vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle>
             {meal ? "עריכת ארוחה" : "הוספת ארוחה חדשה"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4 flex-1 overflow-y-auto pr-2 pb-4">
+          {!meal && (
+            <div className="space-y-2">
+              <Label>קבוצת ארוחה</Label>
+              <Select 
+                value={selectedGroupId}
+                onValueChange={setSelectedGroupId}
+              >
+                <SelectTrigger className="flex flex-row-reverse justify-between">
+                  <SelectValue>
+                    {selectedGroupId === "new" ? "ארוחה חדשה" : mealGroups.find(g => g.id === selectedGroupId)?.name || "ארוחה חדשה"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent position="popper" align="end" className="w-full min-w-[200px]" dir="rtl">
+                  <div className="flex flex-col">
+                    {mealGroups.map(group => (
+                      <SelectItem key={group.id} value={group.id} className="text-right flex flex-row-reverse justify-between">
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="new" className="text-right flex flex-row-reverse justify-between">
+                      ארוחה חדשה
+                    </SelectItem>
+                  </div>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="space-y-2">
             <Label>חיפוש מאכל</Label>
             <div className="relative" ref={dropdownRef}>
@@ -227,7 +281,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                 aria-haspopup="listbox"
               >
                 {selectedFood ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 w-full justify-end">
+                    <span>{selectedFood.name_he}</span>
                     {selectedFood.image_url && (
                       <img
                         src={selectedFood.image_url}
@@ -238,10 +293,9 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                         }}
                       />
                     )}
-                    <span>{selectedFood.name_he}</span>
                   </div>
                 ) : (
-                  <span className="text-muted-foreground">בחר מאכל</span>
+                  <span className="text-muted-foreground w-full text-right">בחר מאכל</span>
                 )}
                 <span className="absolute inset-y-0 left-0 flex items-center pl-2 pointer-events-none">
                   <svg
@@ -262,8 +316,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               </button>
               
               {comboboxOpen && (
-                <div className="absolute z-50 w-full mt-1">
-                  <div className="bg-card border rounded-lg shadow-lg">
+                <div className="absolute z-50 w-[calc(100%-8px)] mt-1">
+                  <div className="bg-card border rounded-lg shadow-lg max-h-[calc(85vh-300px)] overflow-hidden">
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -275,10 +329,10 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                         }
                       }}
                       placeholder="חפש מאכל..."
-                      className="border-0 border-b rounded-none focus:ring-0"
+                      className="border-0 border-b rounded-none focus:ring-0 text-right"
                       autoFocus
                     />
-                    <div className="max-h-[300px] overflow-y-auto">
+                    <div className="overflow-y-auto divide-y divide-border" style={{ maxHeight: 'inherit' }}>
                       {loading ? (
                         <div className="p-2 text-center text-muted-foreground" role="status">
                           <div className="inline-block animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full ml-2" />
@@ -291,7 +345,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                           <button
                             key={food.id}
                             type="button"
-                            className="w-full text-right px-3 py-2 hover:bg-muted border-b last:border-0 flex items-center gap-2"
+                            className="w-full text-right px-3 py-2 hover:bg-muted border-b last:border-0 flex flex-row-reverse items-center gap-2"
                             onClick={() => handleFoodSelect(food)}
                           >
                             {food.image_url && (
@@ -304,7 +358,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                                 }}
                               />
                             )}
-                            <div className="flex-1">
+                            <div className="flex-1 text-right">
                               <div className="font-medium">{food.name_he}</div>
                               <div className="text-sm text-muted-foreground">{food.calories} קק"ל ל-100 גרם</div>
                             </div>
@@ -326,6 +380,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                   <Input
                     id="weight"
                     type="number"
+                    dir="rtl"
+                    className="text-right"
                     value={formData.weight}
                     onChange={(e) => handleAmountChange(parseFloat(e.target.value))}
                   />
@@ -336,15 +392,17 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
                     value={formData.unit}
                     onValueChange={handleUnitChange}
                   >
-                    <SelectTrigger>
-                      <SelectValue />
+                    <SelectTrigger className="flex flex-row-reverse justify-between">
+                      <SelectValue defaultValue="גרם" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {selectedFood.food_measurement_units?.map(mu => (
-                        <SelectItem key={mu.unit} value={mu.unit}>
-                          {mu.unit} ({mu.grams}g)
-                        </SelectItem>
-                      ))}
+                    <SelectContent align="end" className="w-full min-w-[200px]" dir="rtl">
+                      <div className="flex flex-col">
+                        {selectedFood.food_measurement_units?.map(mu => (
+                          <SelectItem key={mu.unit} value={mu.unit} className="text-right flex flex-row-reverse justify-between">
+                            {mu.unit} ({mu.grams}g)
+                          </SelectItem>
+                        ))}
+                      </div>
                     </SelectContent>
                   </Select>
                 </div>
@@ -353,13 +411,13 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>קלוריות</Label>
-                  <div className="p-2 bg-muted rounded-md">
+                  <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.calories || 0)}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>חלבון (גרם)</Label>
-                  <div className="p-2 bg-muted rounded-md">
+                  <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.protein || 0)}
                   </div>
                 </div>
@@ -368,13 +426,13 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>פחמימות (גרם)</Label>
-                  <div className="p-2 bg-muted rounded-md">
+                  <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.carbs || 0)}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label>שומן (גרם)</Label>
-                  <div className="p-2 bg-muted rounded-md">
+                  <div className="p-2 bg-muted rounded-md text-right">
                     {Math.round(formData.fat || 0)}
                   </div>
                 </div>
@@ -382,7 +440,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal }: AddEdi
             </>
           )}
 
-          <div className="flex justify-end space-x-2 space-x-reverse">
+          <div className="flex justify-end space-x-2 space-x-reverse sticky bottom-0 bg-background pt-2 mt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               ביטול
             </Button>

@@ -11,9 +11,37 @@ const getCurrentUserId = async () => {
 /**
  * Creates or gets a meal group for a specific date and name
  */
-export async function getOrCreateMealGroup(date: string, name: string = "ארוחה") {
-  // Try to get existing meal group
+async function getNextMealGroupNumber(date: string, userId: string): Promise<number> {
+  const { data: groups, error } = await supabase
+    .from('meal_groups')
+    .select('name')
+    .eq('date', date)
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Error getting meal groups:', error)
+    return 1
+  }
+
+  const numbers = (groups || [])
+    .map(g => {
+      const match = g.name.match(/^ארוחה (\d+)$/)
+      return match ? parseInt(match[1]) : 0
+    })
+    .filter(n => !isNaN(n))
+
+  return numbers.length > 0 ? Math.max(...numbers) + 1 : 1
+}
+
+export async function getOrCreateMealGroup(date: string, name?: string) {
   const userId = await getCurrentUserId()
+
+  if (!name) {
+    const nextNumber = await getNextMealGroupNumber(date, userId)
+    name = `ארוחה ${nextNumber}`
+  }
+
+  // Try to get existing meal group with this name
   const { data: existingGroups, error: fetchError } = await supabase
     .from('meal_groups')
     .select('id')
