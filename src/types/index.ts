@@ -75,3 +75,12 @@ export interface UserTargets {
   carbs: number;
   fat: number;
 }
+
+export interface WaterLog {
+  id: string;
+  user_id: string;
+  date: string;
+  amount: number;
+  created_at: string;
+  updated_at: string;
+}

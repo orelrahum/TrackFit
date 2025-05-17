@@ -2,7 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup, deleteMealGroup } from "@/lib/meal-service";
+import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup, deleteMealGroup } from "@/lib/meal-service"
+import { WaterTracker } from "@/components/WaterTracker"
 import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
@@ -271,8 +272,9 @@ const HomePage = () => {
                 onDeleteGroup={handleDeleteGroup}
               />
             </div>
-            <div className="md:w-1/3">
+            <div className="md:w-1/3 space-y-6">
               <DailySummary nutrients={dayData.nutrients} />
+              <WaterTracker date={currentDate.toISOString().split('T')[0]} />
             </div>
           </div>
         </main>
