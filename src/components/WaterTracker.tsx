@@ -6,7 +6,7 @@ import { Progress } from "./ui/progress"
 import { getWaterLogForDate, updateWaterLog } from "@/lib/water-service"
 import { WaterLog } from "@/types"
 
-const DAILY_GOAL = 2000 // ml
+const DAILY_GOAL = 2500 // ml
 const QUICK_ADD_AMOUNTS = [
   { label: "כוס קטנה", amount: 200 },
   { label: "פחית/בקבוק קטן", amount: 330 },
