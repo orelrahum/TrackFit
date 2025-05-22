@@ -227,14 +227,14 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
 
   return (
     <Dialog open={dialogOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] min-h-[50vh] overflow-hidden flex flex-col">
+      <DialogContent className="w-[80vw] h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
             {meal ? "עריכת ארוחה" : "הוספת ארוחה חדשה"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4 flex-1 overflow-y-auto pr-2 pb-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6 flex-1">
           {!meal && (
             <div className="space-y-2">
               <Label>קבוצת ארוחה</Label>
@@ -317,7 +317,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
               
               {comboboxOpen && (
                 <div className="absolute z-50 w-[calc(100%-8px)] mt-1">
-                  <div className="bg-card border rounded-lg shadow-lg max-h-[calc(85vh-300px)] overflow-hidden">
+                  <div className="bg-card border rounded-lg shadow-lg">
                     <Input
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
@@ -332,7 +332,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
                       className="border-0 border-b rounded-none focus:ring-0 text-right"
                       autoFocus
                     />
-                    <div className="overflow-y-auto divide-y divide-border" style={{ maxHeight: 'inherit' }}>
+                    <div className="divide-y divide-border max-h-[400px] overflow-y-auto">
                       {loading ? (
                         <div className="p-2 text-center text-muted-foreground" role="status">
                           <div className="inline-block animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full ml-2" />
@@ -440,7 +440,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
             </>
           )}
 
-          <div className="flex justify-end space-x-2 space-x-reverse sticky bottom-0 bg-background pt-2 mt-4">
+          <div className="flex justify-end space-x-2 space-x-reverse bg-background pt-2 mt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               ביטול
             </Button>
