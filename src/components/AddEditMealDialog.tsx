@@ -141,7 +141,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     }
 
     try {
-      const defaultWeight = defaultUnit === "גרמים" ? 100 : 1;
+      const defaultWeight = (defaultUnit === "גרמים" || defaultUnit === "גרם") ? 100 : 1;
       const nutritionValues = calculateNutrition(food, defaultWeight, defaultUnit);
       setFormData({
         name: food.name_he,
@@ -154,7 +154,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     } catch (error) {
       console.error('Error calculating nutrition:', error);
       // Set safe default values if calculation fails
-      const defaultWeight = defaultUnit === "גרמים" ? 100 : 1;
+      const defaultWeight = (defaultUnit === "גרמים" || defaultUnit === "גרם") ? 100 : 1;
       setFormData({
         name: food.name_he,
         unit: defaultUnit,
@@ -193,7 +193,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
     if (!selectedFood || !unit) return;
     
     // Set default weight based on unit
-    const newWeight = unit === "גרמים" ? 100 : 1;
+    const newWeight = (unit === "גרמים" || unit === "גרם") ? 100 : 1;
     
     try {
       const nutritionValues = calculateNutrition(selectedFood, newWeight, unit);
