@@ -1,10 +1,9 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { getOrCreateMealGroup, addMealToGroup, deleteMeal, getMealsForDate, updateMeal, deleteEmptyMealGroups, updateMealGroup, deleteMealGroup } from "@/lib/meal-service"
 import { WaterTracker } from "@/components/WaterTracker"
-import DateNavigation from "@/components/DateNavigation";
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
@@ -16,9 +15,8 @@ const HomePage = () => {
   const { toast } = useToast();
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [dayData, setDayData] = useState<DayData>({
-    date: currentDate.toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0],
     nutrients: {
       calories: { amount: 0, target: 0 },
       protein: { amount: 0, target: 0 },
@@ -27,22 +25,6 @@ const HomePage = () => {
     },
     meals: []
   });
-
-  const handlePrevDay = () => {
-    const prevDay = new Date(currentDate);
-    prevDay.setDate(currentDate.getDate() - 1);
-    setCurrentDate(prevDay);
-  };
-
-  const handleNextDay = () => {
-    const nextDay = new Date(currentDate);
-    nextDay.setDate(currentDate.getDate() + 1);
-    setCurrentDate(nextDay);
-  };
-
-  const handleTodayClick = () => {
-    setCurrentDate(new Date());
-  };
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>(undefined);
@@ -80,11 +62,11 @@ const HomePage = () => {
     }
   };
 
-  // Load meals when date changes
+  // Subscribe to header's date changes and load meals
+  // Subscribe to header's date changes
   useEffect(() => {
-    const loadMeals = async () => {
+    const loadMeals = async (dateStr: string) => {
       try {
-        const dateStr = currentDate.toISOString().split('T')[0];
         const groups = await getMealsForDate(dateStr);
         const totals = calculateTotalNutrients(groups);
         setDayData(prev => ({
@@ -107,12 +89,40 @@ const HomePage = () => {
         });
       }
     };
-    loadMeals();
-  }, [currentDate]);
+    // Set up an observer to watch for date changes in the document title
+    const observer = new MutationObserver(() => {
+      const dateStr = document.title.split(' - ')[1];
+      if (dateStr && dateStr !== dayData.date) {
+        setDayData(prev => ({
+          ...prev,
+          date: dateStr
+        }));
+        loadMeals(dateStr);
+      }
+    });
+
+    observer.observe(document.querySelector('title')!, {
+      subtree: true,
+      characterData: true,
+      childList: true
+    });
+
+    // Initial load
+    const initialDateStr = document.title.split(' - ')[1] || dayData.date;
+    if (initialDateStr !== dayData.date) {
+      setDayData(prev => ({
+        ...prev,
+        date: initialDateStr
+      }));
+      loadMeals(initialDateStr);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleSaveMeal = async (mealData: Partial<Meal>, groupId: string) => {
     try {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = dayData.date;
       
       if (selectedMeal) {
         // עריכת ארוחה קיימת
@@ -155,7 +165,7 @@ const HomePage = () => {
     try {
       await updateMealGroup(groupId, data);
       
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = dayData.date;
       const groups = await getMealsForDate(dateStr);
       const totals = calculateTotalNutrients(groups);
       
@@ -185,7 +195,7 @@ const HomePage = () => {
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = dayData.date;
       
       // Delete the group and its meals
       await deleteMealGroup(groupId);
@@ -221,7 +231,7 @@ const HomePage = () => {
 
   const handleDeleteMeal = async (id: string) => {
     try {
-      const dateStr = currentDate.toISOString().split('T')[0];
+      const dateStr = dayData.date;
       
       // Delete from Supabase
       await deleteMeal(id);
@@ -263,13 +273,6 @@ const HomePage = () => {
       <div className="h-screen w-screen bg-background">
         {/* Header is now handled globally in App.tsx */}
         <main className="p-6 h-screen">
-          <DateNavigation 
-            currentDate={currentDate} 
-            onPrevDay={handlePrevDay} 
-            onNextDay={handleNextDay}
-            onTodayClick={handleTodayClick}
-          />
-          
           <div className="space-y-6 md:space-y-0 md:flex md:gap-6 w-full mt-6">
             <div className="md:w-2/3">
               <MealList
@@ -285,7 +288,7 @@ const HomePage = () => {
             </div>
             <div className="md:w-1/3 space-y-6">
               <DailySummary nutrients={dayData.nutrients} />
-              <WaterTracker date={currentDate.toISOString().split('T')[0]} />
+              <WaterTracker date={dayData.date} />
             </div>
           </div>
         </main>
@@ -300,7 +303,7 @@ const HomePage = () => {
         }}
         onSave={handleSaveMeal}
         meal={selectedMeal}
-        currentDate={currentDate.toISOString().split('T')[0]}
+        currentDate={dayData.date}
         preSelectedGroupId={selectedGroupId}
         isAddFoodToMeal={isAddFoodToMeal}
       />

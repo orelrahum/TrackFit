@@ -12,8 +12,9 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: Dat
   // Hebrew options for date formatting
   const options: Intl.DateTimeFormatOptions = {
     weekday: 'long',
-    day: 'numeric',
+    year: 'numeric',
     month: 'long',
+    day: 'numeric',
   };
   
   const getDisplayDate = (date: Date) => {
@@ -43,7 +44,7 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: Dat
   const displayDate = getDisplayDate(currentDate);
   
   return (
-    <div className="flex items-center justify-between w-full px-4 py-2">
+    <div className="flex items-center justify-between w-[400px] px-4 py-2">
       <button 
         onClick={onPrevDay}
         className="p-1 rounded-full hover:bg-gray-100"
@@ -52,8 +53,8 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: Dat
         <CircleChevronRight className="h-6 w-6" />
       </button>
       
-      <div className="flex items-center gap-2">
-        <h2 className="text-xl font-bold">{displayDate}</h2>
+      <div className="flex items-center gap-2 min-w-[280px] justify-center">
+        <h2 className="text-lg font-bold whitespace-nowrap">{displayDate}</h2>
         <button
           onClick={onTodayClick}
           className="p-1 rounded-full hover:bg-gray-100"

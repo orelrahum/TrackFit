@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import DateNavigation from "@/components/DateNavigation";
 import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
@@ -11,6 +13,34 @@ const Header = () => {
   const { signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+
+  // Update document title when date changes
+  useEffect(() => {
+    if (location.pathname === "/") {
+      document.title = `TrackFit - ${currentDate.toISOString().split('T')[0]}`;
+    }
+  }, [currentDate, location.pathname]);
+
+  const handlePrevDay = () => {
+    const prevDay = new Date(currentDate);
+    prevDay.setDate(currentDate.getDate() - 1);
+    setCurrentDate(prevDay);
+  };
+
+  const handleNextDay = () => {
+    const nextDay = new Date(currentDate);
+    nextDay.setDate(currentDate.getDate() + 1);
+    setCurrentDate(nextDay);
+  };
+
+  const handleTodayClick = () => {
+    setCurrentDate(new Date());
+  };
+
+  // Only show date navigation on homepage
+  const showDateNav = location.pathname === "/";
 
   const handleSignOut = async () => {
     try {
@@ -37,14 +67,28 @@ const Header = () => {
     <header className="bg-background shadow-sm py-4 mb-6 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
-          {/* Logos Centered */}
-          <div className="flex-1 flex justify-center items-center">
-            <img src={LogoText} alt="TrackFit Logo" className="h-8" />
-            <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
+          {/* Left: Empty space or Date Navigation */}
+          <div className="w-[400px] flex items-center">
+            {showDateNav && (
+              <DateNavigation 
+                currentDate={currentDate} 
+                onPrevDay={handlePrevDay} 
+                onNextDay={handleNextDay}
+                onTodayClick={handleTodayClick}
+              />
+            )}
           </div>
 
-          {/* Theme Toggle and Sign Out Buttons */}
-          <div className="flex items-center gap-4">
+          {/* Center: Logos - Always centered */}
+          <div className="flex-1 flex justify-center items-center">
+            <div className="flex items-center">
+              <img src={LogoText} alt="TrackFit Logo" className="h-8" />
+              <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
+            </div>
+          </div>
+
+          {/* Right: Theme Toggle and Sign Out Buttons */}
+          <div className="w-[400px] flex items-center gap-4 justify-end">
             <ThemeToggle />
             <button
               onClick={handleSignOut}
