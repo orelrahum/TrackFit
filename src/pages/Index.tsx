@@ -1,11 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 
-const Index = () => {
+const Welcome = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  useEffect(() => {
+    // If already authenticated, redirect to home
+    if (user) {
+      navigate('/home', { replace: true });
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background" dir="rtl">
@@ -28,23 +36,13 @@ const Index = () => {
 
           <div className="pt-8 relative">
             <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full"></div>
-            {user ? (
-              <Button
-                size="lg"
-                onClick={() => navigate('/home')}
-                className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20"
-              >
-                עבור לדף הבית
-              </Button>
-            ) : (
-              <Button
-                size="lg"
-                onClick={() => navigate('/auth/login')}
-                className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20"
-              >
-                התחל עכשיו
-              </Button>
-            )}
+            <Button
+              size="lg"
+              onClick={() => navigate('/auth/login')}
+              className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20"
+            >
+              התחל עכשיו
+            </Button>
           </div>
 
           {/* Features Section */}
@@ -92,4 +90,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Welcome;

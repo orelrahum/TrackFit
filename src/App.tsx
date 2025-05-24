@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
 import { ThemeProvider } from "./context/ThemeContext"
 import { ProtectedRoute } from "./components/auth/ProtectedRoute"
@@ -13,6 +13,7 @@ import Callback from "./pages/auth/Callback"
 import UserQuestionnaire from "./components/UserQuestionnaire"
 import Header from "./components/Header"
 import Index from "./pages/Index"
+import { useAuth } from "./context/AuthContext"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,15 +24,20 @@ const queryClient = new QueryClient({
   },
 })
 
-// Separate component for routes to use useLocation
 const AppRoutes = () => {
-  const location = useLocation();
-
+  const { user } = useAuth();
+  
   return (
     <>
       <Header />
       <Routes>
-        <Route path="/" element={<Index />} />
+        {/* Root redirect based on auth status */}
+        <Route path="/" element={
+          <Navigate to={user ? "/home" : "/welcome"} replace />
+        } />
+        
+        {/* Welcome/Landing page */}
+        <Route path="/welcome" element={<Index />} />
         
         {/* Auth Routes */}
         <Route path="/auth/login" element={<Login />} />
@@ -71,7 +77,7 @@ const App = () => {
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default App
+export default App;

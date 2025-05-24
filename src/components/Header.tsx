@@ -41,7 +41,6 @@ const Header = () => {
       const dateStr = `${year}-${month}-${day}`;
       document.title = `TrackFit - ${dateStr}`;
     }
-    // Update the state after setting the title
     setCurrentDate(newDate);
   };
 
@@ -73,7 +72,7 @@ const Header = () => {
     updateDateAndTitle(today);
   };
 
-  // Only show date navigation on homepage
+  // Only show date navigation on homepage for authenticated users
   const showDateNav = location.pathname === "/home" && user;
 
   const handleSignOut = async () => {
@@ -86,7 +85,7 @@ const Header = () => {
           variant: "destructive",
         });
       } else {
-        navigate("/auth/login", { replace: true });
+        navigate("/welcome", { replace: true });
       }
     } catch (err) {
       toast({
@@ -116,7 +115,7 @@ const Header = () => {
           {/* Center: Logos - Always centered */}
           <div className="flex-1 flex justify-center items-center">
             <button 
-              onClick={() => navigate('/')} 
+              onClick={() => navigate(user ? '/home' : '/welcome')} 
               className="flex items-center hover:opacity-80 transition-all rounded-lg hover:bg-accent/10 p-2"
             >
               <img src={LogoText} alt="TrackFit Logo" className="h-8" />
