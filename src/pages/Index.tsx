@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -7,9 +8,22 @@ const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // If user is already authenticated, redirect to home
+  useEffect(() => {
+    if (user) {
+      // Check if there's a stored redirect path
+      const redirectPath = sessionStorage.getItem('redirect_after_load');
+      if (redirectPath && redirectPath !== '/') {
+        sessionStorage.removeItem('redirect_after_load');
+        navigate(redirectPath.replace('/TrackFit', ''));
+        return;
+      }
+      // Default redirect for authenticated users without stored path
+      navigate('/home');
+    }
+  }, [user, navigate]);
+
+  // Show loading state while checking auth
   if (user) {
-    navigate('/home');
     return null;
   }
 
