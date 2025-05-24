@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Auth } from '@supabase/auth-ui-react'
 import { ThemeSupa } from '@supabase/auth-ui-shared'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -13,10 +13,11 @@ export default function Login() {
   const { toast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/home'
+  const from = location.state?.from || '/home'
 
   useEffect(() => {
     if (user) {
+      // Navigate to the page they tried to visit or home
       navigate(from, { replace: true })
     }
   }, [user, navigate, from])

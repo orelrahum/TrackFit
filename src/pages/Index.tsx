@@ -38,7 +38,7 @@ const Welcome = () => {
             <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full"></div>
             <Button
               size="lg"
-              onClick={() => navigate('/auth/login')}
+              onClick={() => navigate('/auth/login', { replace: true, state: { from: '/welcome' } })}
               className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20"
             >
               התחל עכשיו

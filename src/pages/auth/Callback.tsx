@@ -13,16 +13,19 @@ export default function Callback() {
         try {
           const profile = await getUserProfile(user.id)
           if (!profile) {
-            // משתמש חדש - הפניה לשאלון
+            // New user - redirect to questionnaire
             navigate('/questionnaire', { replace: true })
           } else {
-            // משתמש קיים - הפניה לדף הבית
+            // Existing user - redirect to home
             navigate('/home', { replace: true })
           }
         } catch (error) {
           console.error('Error checking user profile:', error)
           navigate('/home', { replace: true })
         }
+      } else {
+        // No user - back to welcome page
+        navigate('/welcome', { replace: true })
       }
     }
 
