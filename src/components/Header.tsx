@@ -29,6 +29,12 @@ const Header = () => {
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const day = String(currentDate.getDate()).padStart(2, '0');
       document.title = `TrackFit - ${year}-${month}-${day}`;
+
+// Ensure user's URL matches the current date
+const currentPath = location.pathname;
+if (currentPath === '/home') {
+  window.history.replaceState(null, '', `/TrackFit/home`);
+}
     }
   }, [location.pathname, currentDate]);
 

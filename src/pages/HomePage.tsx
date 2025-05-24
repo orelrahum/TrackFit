@@ -8,7 +8,6 @@ import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
 import { DayData, MealGroup, Meal } from "@/types";
-import { v4 as uuidv4 } from "uuid";
 import { calculateTotalNutrients } from "@/lib/meal-utils";
 
 const HomePage = () => {
@@ -37,6 +36,62 @@ const HomePage = () => {
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>(undefined);
   const [selectedGroupId, setSelectedGroupId] = useState<string>("new");
   const [isAddFoodToMeal, setIsAddFoodToMeal] = useState(false);
+
+  const loadMeals = async (dateStr: string) => {
+    try {
+      const groups = await getMealsForDate(dateStr);
+      const totals = calculateTotalNutrients(groups);
+      setDayData(prev => ({
+        ...prev,
+        date: dateStr,
+        meals: groups,
+        nutrients: {
+          calories: { ...prev.nutrients.calories, amount: totals.calories },
+          protein: { ...prev.nutrients.protein, amount: totals.protein },
+          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
+          fat: { ...prev.nutrients.fat, amount: totals.fat }
+        }
+      }));
+    } catch (error) {
+      console.error('Error loading meals:', error);
+      toast({
+        title: "שגיאה בטעינת ארוחות",
+        description: "אנא נסה שוב",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Load meals both on mount and when date changes
+  useEffect(() => {
+    const getDateFromTitle = (): string | null => {
+      const dateStr = document.title.split(' - ')[1];
+      return dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : null;
+    };
+
+    // Set initial title and load data
+    const year = dayData.date.split('-')[0];
+    const month = dayData.date.split('-')[1];
+    const day = dayData.date.split('-')[2];
+    document.title = `TrackFit - ${year}-${month}-${day}`;
+    loadMeals(dayData.date);
+
+    // Set up observer for date changes
+    const observer = new MutationObserver(async () => {
+      const dateStr = getDateFromTitle();
+      if (dateStr) {
+        await loadMeals(dateStr);
+      }
+    });
+
+    observer.observe(document.querySelector('title')!, {
+      subtree: true,
+      characterData: true,
+      childList: true
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleAddMeal = () => {
     setSelectedMeal(undefined);
@@ -69,100 +124,20 @@ const HomePage = () => {
     }
   };
 
-  // Subscribe to header's date changes and load meals
-  // Subscribe to header's date changes
-  useEffect(() => {
-    const loadMeals = async (dateStr: string) => {
-      try {
-        const groups = await getMealsForDate(dateStr);
-        const totals = calculateTotalNutrients(groups);
-        setDayData(prev => ({
-          ...prev,
-          date: dateStr,
-          meals: groups,
-          nutrients: {
-            calories: { ...prev.nutrients.calories, amount: totals.calories },
-            protein: { ...prev.nutrients.protein, amount: totals.protein },
-            carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-            fat: { ...prev.nutrients.fat, amount: totals.fat }
-          }
-        }));
-      } catch (error) {
-        console.error('Error loading meals:', error);
-        toast({
-          title: "שגיאה בטעינת ארוחות",
-          description: "אנא נסה שוב",
-          variant: "destructive",
-        });
-      }
-    };
-
-    const getDateFromTitle = (): string | null => {
-      const dateStr = document.title.split(' - ')[1];
-      return dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : null;
-    };
-
-    // Set up an observer to watch for date changes in the document title
-    const observer = new MutationObserver(async () => {
-      const dateStr = getDateFromTitle();
-      if (dateStr) {
-        // Always load meals when title changes, regardless of current date
-        await loadMeals(dateStr);
-        setDayData(prev => ({
-          ...prev,
-          date: dateStr
-        }));
-      }
-    });
-
-    observer.observe(document.querySelector('title')!, {
-      subtree: true,
-      characterData: true,
-      childList: true
-    });
-
-    // Initial load - only if we can get a valid date from the title
-    const initialDateStr = getDateFromTitle();
-    if (initialDateStr && initialDateStr !== dayData.date) {
-      setDayData(prev => ({
-        ...prev,
-        date: initialDateStr
-      }));
-      loadMeals(initialDateStr);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const handleSaveMeal = async (mealData: Partial<Meal>, groupId: string) => {
     try {
       const dateStr = dayData.date;
       
       if (selectedMeal) {
-        // עריכת ארוחה קיימת
         await updateMeal(selectedMeal.id, mealData);
       } else {
-        // הוספת ארוחה חדשה
         const mealGroupId = groupId === "new" ? 
           await getOrCreateMealGroup(dateStr) : 
           groupId;
         await addMealToGroup(mealGroupId, mealData);
       }
 
-      // Refresh meals data
-      const groups = await getMealsForDate(dateStr);
-      const totals = calculateTotalNutrients(groups);
-      setDayData(prev => ({
-        ...prev,
-        meals: groups,
-        nutrients: {
-          calories: { ...prev.nutrients.calories, amount: totals.calories },
-          protein: { ...prev.nutrients.protein, amount: totals.protein },
-          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-          fat: { ...prev.nutrients.fat, amount: totals.fat }
-        }
-      }));
-
+      await loadMeals(dateStr);
       toast({
         title: selectedMeal ? "הארוחה נערכה בהצלחה" : "הארוחה נוספה בהצלחה"
       });
@@ -178,22 +153,7 @@ const HomePage = () => {
   const handleEditMealGroup = async (groupId: string, data: { name: string }) => {
     try {
       await updateMealGroup(groupId, data);
-      
-      const dateStr = dayData.date;
-      const groups = await getMealsForDate(dateStr);
-      const totals = calculateTotalNutrients(groups);
-      
-      setDayData(prev => ({
-        ...prev,
-        meals: groups,
-        nutrients: {
-          calories: { ...prev.nutrients.calories, amount: totals.calories },
-          protein: { ...prev.nutrients.protein, amount: totals.protein },
-          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-          fat: { ...prev.nutrients.fat, amount: totals.fat }
-        }
-      }));
-      
+      await loadMeals(dayData.date);
       toast({
         title: "שם הקבוצה עודכן בהצלחה"
       });
@@ -209,26 +169,8 @@ const HomePage = () => {
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
-      const dateStr = dayData.date;
-      
-      // Delete the group and its meals
       await deleteMealGroup(groupId);
-      
-      // Refresh data from server
-      const groups = await getMealsForDate(dateStr);
-      const totals = calculateTotalNutrients(groups);
-      
-      setDayData(prev => ({
-        ...prev,
-        meals: groups,
-        nutrients: {
-          calories: { ...prev.nutrients.calories, amount: totals.calories },
-          protein: { ...prev.nutrients.protein, amount: totals.protein },
-          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-          fat: { ...prev.nutrients.fat, amount: totals.fat }
-        }
-      }));
-    
+      await loadMeals(dayData.date);
       toast({
         title: "הקבוצה נמחקה בהצלחה",
         description: "הערכים התזונתיים עודכנו בהתאם",
@@ -245,29 +187,9 @@ const HomePage = () => {
 
   const handleDeleteMeal = async (id: string) => {
     try {
-      const dateStr = dayData.date;
-      
-      // Delete from Supabase
       await deleteMeal(id);
-      
-      // Delete empty meal groups
-      await deleteEmptyMealGroups(dateStr);
-      
-      // Refresh data from server
-      const groups = await getMealsForDate(dateStr);
-      const totals = calculateTotalNutrients(groups);
-      
-      setDayData(prev => ({
-        ...prev,
-        meals: groups,
-        nutrients: {
-          calories: { ...prev.nutrients.calories, amount: totals.calories },
-          protein: { ...prev.nutrients.protein, amount: totals.protein },
-          carbs: { ...prev.nutrients.carbs, amount: totals.carbs },
-          fat: { ...prev.nutrients.fat, amount: totals.fat }
-        }
-      }));
-    
+      await deleteEmptyMealGroups(dayData.date);
+      await loadMeals(dayData.date);
       toast({
         title: "הארוחה נמחקה בהצלחה",
         description: "הערכים התזונתיים עודכנו בהתאם",
@@ -283,30 +205,27 @@ const HomePage = () => {
   };
 
   return (
-    <>
-      <div className="h-screen w-screen bg-background">
-        {/* Header is now handled globally in App.tsx */}
-        <main className="p-6 h-screen">
-          <div className="space-y-6 md:space-y-0 md:flex md:gap-6 w-full mt-6">
-            <div className="md:w-2/3">
-              <MealList
-                meals={dayData.meals}
-                onAddMeal={handleAddMeal}
-                onAddWithAI={handleAddWithAI}
-                onEditMeal={handleEditMeal}
-                onDeleteMeal={handleDeleteMeal}
-                onEditGroup={handleEditMealGroup}
-                onDeleteGroup={handleDeleteGroup}
-                onAddFoodToGroup={handleAddFoodToGroup}
-              />
-            </div>
-            <div className="md:w-1/3 space-y-6">
-              <DailySummary nutrients={dayData.nutrients} />
-              <WaterTracker date={dayData.date} />
-            </div>
+    <div className="h-screen w-screen bg-background">
+      <main className="p-6 h-screen">
+        <div className="space-y-6 md:space-y-0 md:flex md:gap-6 w-full mt-6">
+          <div className="md:w-2/3">
+            <MealList
+              meals={dayData.meals}
+              onAddMeal={handleAddMeal}
+              onAddWithAI={handleAddWithAI}
+              onEditMeal={handleEditMeal}
+              onDeleteMeal={handleDeleteMeal}
+              onEditGroup={handleEditMealGroup}
+              onDeleteGroup={handleDeleteGroup}
+              onAddFoodToGroup={handleAddFoodToGroup}
+            />
           </div>
-        </main>
-      </div>
+          <div className="md:w-1/3 space-y-6">
+            <DailySummary nutrients={dayData.nutrients} />
+            <WaterTracker date={dayData.date} />
+          </div>
+        </div>
+      </main>
       
       <AddEditMealDialog
         isOpen={isDialogOpen}
@@ -321,7 +240,7 @@ const HomePage = () => {
         preSelectedGroupId={selectedGroupId}
         isAddFoodToMeal={isAddFoodToMeal}
       />
-    </>
+    </div>
   );
 };
 
