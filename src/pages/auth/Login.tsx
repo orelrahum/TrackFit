@@ -51,7 +51,7 @@ export default function Login() {
   }, [toast])
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background auth-container pt-8 pb-8" dir="rtl">
+    <div className="flex items-center justify-center min-h-[calc(100vh-80px)] bg-background auth-container pt-8 pb-8" dir="rtl">
       <Card className="w-full max-w-md auth-form bg-card">
         <CardHeader>
           <CardTitle className="text-2xl text-center">ברוכים הבאים ל-TrackFit</CardTitle>

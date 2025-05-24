@@ -32,12 +32,23 @@ const App = () => {
             <TooltipProvider>
             <Toaster />
             <Sonner />
-            {/* Only show Header on non-landing pages */}
             <Routes>
-              {/* Public Routes */}
+              {/* Landing Page - No Header */}
               <Route path="/" element={<Index />} />
-              <Route path="/auth/login" element={<Login />} />
-              <Route path="/auth/callback" element={<Callback />} />
+
+              {/* Auth Routes with Header */}
+              <Route path="/auth/login" element={
+                <>
+                  <Header />
+                  <Login />
+                </>
+              } />
+              <Route path="/auth/callback" element={
+                <>
+                  <Header />
+                  <Callback />
+                </>
+              } />
               
               {/* Protected Routes */}
               <Route path="/home" element={
@@ -58,8 +69,13 @@ const App = () => {
                 </ProtectedRoute>
               } />
               
-              {/* Not Found */}
-              <Route path="*" element={<NotFound />} />
+              {/* Not Found - with Header */}
+              <Route path="*" element={
+                <>
+                  <Header />
+                  <NotFound />
+                </>
+              } />
             </Routes>
             </TooltipProvider>
           </ThemeProvider>
