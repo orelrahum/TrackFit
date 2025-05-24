@@ -10,23 +10,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 via-background to-background" dir="rtl">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-24">
+      <div className="container mx-auto px-4 pt-12 pb-24">
         <div className="flex flex-col items-center text-center space-y-12">
-          <div className="flex items-center mb-8 relative">
-            <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
-            <div className="relative flex items-center">
-              <img 
-                src="/Logo/LogoText.png" 
-                alt="TrackFit Logo" 
-                className="h-32 transition-transform duration-500 hover:scale-105"
-              />
-              <img 
-                src="/Logo/Symbol.png" 
-                alt="TrackFit Symbol" 
-                className="h-32 mr-4 transition-transform duration-500 hover:scale-105" 
-              />
-            </div>
-          </div>
+          {/* Large welcome text instead of duplicate logos */}
+          <h2 className="text-3xl text-muted-foreground font-medium">
+            ברוכים הבאים ל-TrackFit
+          </h2>
           
           <div className="space-y-8 max-w-3xl relative">
             <h1 className="text-6xl font-bold tracking-tight bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">

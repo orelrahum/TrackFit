@@ -10,7 +10,7 @@ import LogoText from '/Logo/LogoText.png';
 import SymbolLogo from '/Logo/Symbol.png';
 
 const Header = () => {
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,7 +74,7 @@ const Header = () => {
   };
 
   // Only show date navigation on homepage
-  const showDateNav = location.pathname === "/home";
+  const showDateNav = location.pathname === "/home" && user;
 
   const handleSignOut = async () => {
     try {
@@ -115,21 +115,26 @@ const Header = () => {
 
           {/* Center: Logos - Always centered */}
           <div className="flex-1 flex justify-center items-center">
-            <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/')} 
+              className="flex items-center hover:opacity-80 transition-all rounded-lg hover:bg-accent/10 p-2"
+            >
               <img src={LogoText} alt="TrackFit Logo" className="h-8" />
               <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
-            </div>
+            </button>
           </div>
 
           {/* Right: Theme Toggle and Sign Out Buttons */}
           <div className="w-[400px] flex items-center gap-4 justify-end">
             <ThemeToggle />
-            <button
-              onClick={handleSignOut}
-              className="px-3 py-1 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
-            >
-              התנתק
-            </button>
+            {user && (
+              <button
+                onClick={handleSignOut}
+                className="px-3 py-1 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+              >
+                התנתק
+              </button>
+            )}
           </div>
         </div>
       </div>

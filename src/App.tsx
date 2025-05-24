@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
 import { ThemeProvider } from "./context/ThemeContext"
 import { ProtectedRoute } from "./components/auth/ProtectedRoute"
@@ -23,6 +23,39 @@ const queryClient = new QueryClient({
   },
 })
 
+// Separate component for routes to use useLocation
+const AppRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        
+        {/* Auth Routes */}
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/callback" element={<Callback />} />
+        
+        {/* Protected Routes */}
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        } />
+        <Route path="/questionnaire" element={
+          <ProtectedRoute>
+            <UserQuestionnaire />
+          </ProtectedRoute>
+        } />
+        
+        {/* Not Found */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+};
+
 const App = () => {
   return (
     <BrowserRouter basename="/TrackFit">
@@ -30,53 +63,9 @@ const App = () => {
         <AuthProvider>
           <ThemeProvider>
             <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              {/* Landing Page - No Header */}
-              <Route path="/" element={<Index />} />
-
-              {/* Auth Routes with Header */}
-              <Route path="/auth/login" element={
-                <>
-                  <Header />
-                  <Login />
-                </>
-              } />
-              <Route path="/auth/callback" element={
-                <>
-                  <Header />
-                  <Callback />
-                </>
-              } />
-              
-              {/* Protected Routes */}
-              <Route path="/home" element={
-                <ProtectedRoute>
-                  <>
-                    <Header />
-                    <HomePage />
-                  </>
-                </ProtectedRoute>
-              } />
-
-              <Route path="/questionnaire" element={
-                <ProtectedRoute>
-                  <>
-                    <Header />
-                    <UserQuestionnaire />
-                  </>
-                </ProtectedRoute>
-              } />
-              
-              {/* Not Found - with Header */}
-              <Route path="*" element={
-                <>
-                  <Header />
-                  <NotFound />
-                </>
-              } />
-            </Routes>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
             </TooltipProvider>
           </ThemeProvider>
         </AuthProvider>
