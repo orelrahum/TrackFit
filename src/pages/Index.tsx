@@ -34,16 +34,13 @@ const Welcome = () => {
             </p>
           </div>
 
-          <div className="pt-8 relative">
-            <div className="absolute inset-0 bg-primary/5 blur-xl rounded-full"></div>
-            <Button
-              size="lg"
-              onClick={() => navigate('/auth/login', { replace: true, state: { from: '/welcome' } })}
-              className="text-lg px-12 py-6 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20"
-            >
-              התחל עכשיו
-            </Button>
-          </div>
+          <Button
+            size="lg"
+            onClick={() => navigate('/auth/login', { state: { from: '/welcome' } })}
+            className="text-lg px-12 py-6 relative z-10 bg-primary hover:bg-primary/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20 before:content-[''] before:absolute before:inset-0 before:-z-10 before:bg-primary/5 before:blur-xl before:rounded-full"
+          >
+            התחל עכשיו
+          </Button>
 
           {/* Features Section */}
           <div className="grid md:grid-cols-3 gap-8 mt-24 w-full">
