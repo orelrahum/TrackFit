@@ -15,11 +15,13 @@ interface AddEditMealDialogProps {
   onSave: (meal: Partial<Meal>, groupId: string) => void;
   meal?: Meal;
   currentDate: string;
+  preSelectedGroupId?: string;
+  isAddFoodToMeal?: boolean;
 }
 
-const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentDate }: AddEditMealDialogProps) => {
+const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentDate, preSelectedGroupId, isAddFoodToMeal }: AddEditMealDialogProps) => {
   const [selectedFood, setSelectedFood] = useState<DBFood | null>(null);
-  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>(preSelectedGroupId || "");
   const [mealGroups, setMealGroups] = useState<MealGroup[]>([]);
   const [formData, setFormData] = useState<Partial<Meal>>({
     name: meal?.name || "",
@@ -72,7 +74,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
       setSearchQuery("");
       setSearchResults([]);
       setSelectedFood(null);
-      setSelectedGroupId("new");
+      setSelectedGroupId(preSelectedGroupId || "new");
       setFormData({
         name: meal?.name || "",
         calories: meal?.calories || 0,
@@ -230,12 +232,12 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
       <DialogContent className="w-[80vw] h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>
-            {meal ? "עריכת ארוחה" : "הוספת ארוחה חדשה"}
+            {meal ? "עריכת מאכל" : isAddFoodToMeal ? "הוספת מאכל" : "הוספת ארוחה חדשה"}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-6 flex-1">
-          {!meal && (
+          {!meal && !isAddFoodToMeal && (
             <div className="space-y-2">
               <Label>קבוצת ארוחה</Label>
               <Select 
@@ -445,7 +447,7 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
               ביטול
             </Button>
             <Button type="submit" disabled={!selectedFood}>
-              {meal ? "שמור שינויים" : "הוסף ארוחה"}
+              {meal ? "שמור שינויים" : isAddFoodToMeal ? "הוסף מאכל" : "הוסף ארוחה"}
             </Button>
           </div>
         </form>

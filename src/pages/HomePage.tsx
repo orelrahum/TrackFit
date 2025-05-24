@@ -46,9 +46,19 @@ const HomePage = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | undefined>(undefined);
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("new");
+  const [isAddFoodToMeal, setIsAddFoodToMeal] = useState(false);
 
   const handleAddMeal = () => {
     setSelectedMeal(undefined);
+    setIsAddFoodToMeal(false);
+    setIsDialogOpen(true);
+  };
+
+  const handleAddFoodToGroup = (groupId: string) => {
+    setSelectedMeal(undefined);
+    setSelectedGroupId(groupId);
+    setIsAddFoodToMeal(true);
     setIsDialogOpen(true);
   };
 
@@ -270,6 +280,7 @@ const HomePage = () => {
                 onDeleteMeal={handleDeleteMeal}
                 onEditGroup={handleEditMealGroup}
                 onDeleteGroup={handleDeleteGroup}
+                onAddFoodToGroup={handleAddFoodToGroup}
               />
             </div>
             <div className="md:w-1/3 space-y-6">
@@ -282,10 +293,16 @@ const HomePage = () => {
       
       <AddEditMealDialog
         isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        onClose={() => {
+          setIsDialogOpen(false);
+          setSelectedGroupId("new");
+          setIsAddFoodToMeal(false);
+        }}
         onSave={handleSaveMeal}
         meal={selectedMeal}
         currentDate={currentDate.toISOString().split('T')[0]}
+        preSelectedGroupId={selectedGroupId}
+        isAddFoodToMeal={isAddFoodToMeal}
       />
     </>
   );

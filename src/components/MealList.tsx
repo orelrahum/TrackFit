@@ -26,9 +26,10 @@ interface MealListProps {
   onDeleteMeal: (id: string) => void;
   onEditGroup?: (groupId: string, data: { name: string }) => void;
   onDeleteGroup?: (groupId: string) => void;
+  onAddFoodToGroup?: (groupId: string) => void;
 }
 
-const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onEditGroup, onDeleteGroup }: MealListProps) => {
+const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onEditGroup, onDeleteGroup, onAddFoodToGroup }: MealListProps) => {
   const [editingGroup, setEditingGroup] = useState<MealGroup | null>(null);
   const [editedGroupName, setEditedGroupName] = useState("");
   const [groupToDelete, setGroupToDelete] = useState<MealGroup | null>(null);
@@ -45,6 +46,15 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
               <div className="p-3 bg-muted border-b flex justify-between items-center">
                 <h3 className="font-medium text-foreground">{mealGroup.name}</h3>
                 <div className="flex gap-1">
+                  {onAddFoodToGroup && (
+                    <button
+                      onClick={() => onAddFoodToGroup(mealGroup.id)}
+                      className="p-1.5 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-950 rounded-full"
+                      aria-label="הוסף מאכל לארוחה"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  )}
                   {onEditGroup && (
                     <button
                       onClick={() => {
