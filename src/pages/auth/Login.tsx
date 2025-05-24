@@ -13,7 +13,7 @@ export default function Login() {
   const { toast } = useToast()
   const navigate = useNavigate()
   const location = useLocation()
-  const from = location.state?.from?.pathname || '/'
+  const from = location.state?.from?.pathname || '/home'
 
   useEffect(() => {
     if (user) {
@@ -125,7 +125,7 @@ export default function Login() {
                 },
               },
             }}
-            redirectTo={`${window.location.origin}/auth/callback`}
+            redirectTo={`${window.location.origin}/TrackFit/auth/callback`}
           />
         </CardContent>
       </Card>

@@ -22,8 +22,18 @@ const Header = () => {
     return local;
   });
 
+  // Set initial title and trigger meal load when component mounts
+  useEffect(() => {
+    if (location.pathname === "/home") {
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      document.title = `TrackFit - ${year}-${month}-${day}`;
+    }
+  }, [location.pathname, currentDate]);
+
   const updateDateAndTitle = (newDate: Date) => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/home") {
       const year = newDate.getFullYear();
       const month = String(newDate.getMonth() + 1).padStart(2, '0');
       const day = String(newDate.getDate()).padStart(2, '0');
@@ -62,7 +72,7 @@ const Header = () => {
   };
 
   // Only show date navigation on homepage
-  const showDateNav = location.pathname === "/";
+  const showDateNav = location.pathname === "/home";
 
   const handleSignOut = async () => {
     try {

@@ -11,7 +11,8 @@ import NotFound from "./pages/NotFound"
 import Login from "./pages/auth/Login"
 import Callback from "./pages/auth/Callback"
 import UserQuestionnaire from "./components/UserQuestionnaire"
-import Header from "./components/Header" // Import the Header component
+import Header from "./components/Header"
+import Index from "./pages/Index"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,29 +25,36 @@ const queryClient = new QueryClient({
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/TrackFit">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ThemeProvider>
             <TooltipProvider>
             <Toaster />
             <Sonner />
-            <Header /> {/* Render the Header component here */}
+            {/* Only show Header on non-landing pages */}
             <Routes>
               {/* Public Routes */}
+              <Route path="/" element={<Index />} />
               <Route path="/auth/login" element={<Login />} />
               <Route path="/auth/callback" element={<Callback />} />
               
               {/* Protected Routes */}
-              <Route path="/" element={
+              <Route path="/home" element={
                 <ProtectedRoute>
-                  <HomePage />
+                  <>
+                    <Header />
+                    <HomePage />
+                  </>
                 </ProtectedRoute>
               } />
 
               <Route path="/questionnaire" element={
                 <ProtectedRoute>
-                  <UserQuestionnaire />
+                  <>
+                    <Header />
+                    <UserQuestionnaire />
+                  </>
                 </ProtectedRoute>
               } />
               

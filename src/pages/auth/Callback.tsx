@@ -17,11 +17,11 @@ export default function Callback() {
             navigate('/questionnaire', { replace: true })
           } else {
             // משתמש קיים - הפניה לדף הבית
-            navigate('/', { replace: true })
+            navigate('/home', { replace: true })
           }
         } catch (error) {
           console.error('Error checking user profile:', error)
-          navigate('/', { replace: true })
+          navigate('/home', { replace: true })
         }
       }
     }
