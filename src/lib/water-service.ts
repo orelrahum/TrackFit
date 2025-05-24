@@ -60,6 +60,22 @@ export async function updateWaterLog(date: string, amount: number) {
 /**
  * Gets water log for a specific date
  */
+/**
+ * Clears water log for a specific date
+ */
+export async function clearWaterLog(date: string) {
+  const userId = await getCurrentUserId()
+  const { error } = await supabase
+    .from('water_logs')
+    .delete()
+    .eq('date', date)
+    .eq('user_id', userId)
+  
+  if (error) {
+    throw new Error(`Error clearing water log: ${error.message}`)
+  }
+}
+
 export async function getWaterLogForDate(date: string): Promise<WaterLog | null> {
   const userId = await getCurrentUserId()
   

@@ -3,7 +3,7 @@ import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Progress } from "./ui/progress"
-import { getWaterLogForDate, updateWaterLog } from "@/lib/water-service"
+import { getWaterLogForDate, updateWaterLog, clearWaterLog } from "@/lib/water-service"
 import { WaterLog } from "@/types"
 
 const DAILY_GOAL = 2500 // ml
@@ -77,6 +77,27 @@ export function WaterTracker({ date }: WaterTrackerProps) {
             <span>{DAILY_GOAL} מ"ל</span>
           </div>
           <Progress value={progress} />
+          {currentAmount > 0 && (
+            <div className="flex justify-center mt-2">
+              <Button
+                variant="destructive"
+                disabled={isLoading}
+                onClick={async () => {
+                  setIsLoading(true);
+                  try {
+                    await clearWaterLog(date);
+                    setTodayLog(null);
+                  } catch (error) {
+                    console.error("Error clearing water log:", error);
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+              >
+                נקה את השתייה של היום
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Quick Add Buttons */}
