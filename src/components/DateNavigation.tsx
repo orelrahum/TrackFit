@@ -18,23 +18,28 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: Dat
   };
   
   const getDisplayDate = (date: Date) => {
-    const today = new Date();
+    // Get current date at midnight in local timezone
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
+    
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    // Reset time portions for accurate date comparison
-    const compareDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    const compareToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const compareTomorrow = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
-    const compareYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+    // Convert input date to local midnight
+    const compareDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
 
-    if (compareDate.getTime() === compareToday.getTime()) {
+    if (compareDate.getTime() === today.getTime()) {
       return "היום";
-    } else if (compareDate.getTime() === compareTomorrow.getTime()) {
+    } else if (compareDate.getTime() === tomorrow.getTime()) {
       return "מחר";
-    } else if (compareDate.getTime() === compareYesterday.getTime()) {
+    } else if (compareDate.getTime() === yesterday.getTime()) {
       return "אתמול";
     } else {
       return new Intl.DateTimeFormat('he-IL', options).format(date);

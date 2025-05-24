@@ -15,15 +15,22 @@ const HomePage = () => {
   const { toast } = useToast();
   const { signOut } = useAuth();
   const navigate = useNavigate();
-  const [dayData, setDayData] = useState<DayData>({
-    date: new Date().toISOString().split('T')[0],
-    nutrients: {
-      calories: { amount: 0, target: 0 },
-      protein: { amount: 0, target: 0 },
-      carbs: { amount: 0, target: 0 },
-      fat: { amount: 0, target: 0 }
-    },
-    meals: []
+  const [dayData, setDayData] = useState<DayData>(() => {
+    const now = new Date();
+    const local = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const year = local.getFullYear();
+    const month = String(local.getMonth() + 1).padStart(2, '0');
+    const day = String(local.getDate()).padStart(2, '0');
+    return {
+      date: `${year}-${month}-${day}`,
+      nutrients: {
+        calories: { amount: 0, target: 0 },
+        protein: { amount: 0, target: 0 },
+        carbs: { amount: 0, target: 0 },
+        fat: { amount: 0, target: 0 }
+      },
+      meals: []
+    };
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -89,15 +96,22 @@ const HomePage = () => {
         });
       }
     };
-    // Set up an observer to watch for date changes in the document title
-    const observer = new MutationObserver(() => {
+
+    const getDateFromTitle = (): string | null => {
       const dateStr = document.title.split(' - ')[1];
-      if (dateStr && dateStr !== dayData.date) {
+      return dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : null;
+    };
+
+    // Set up an observer to watch for date changes in the document title
+    const observer = new MutationObserver(async () => {
+      const dateStr = getDateFromTitle();
+      if (dateStr) {
+        // Always load meals when title changes, regardless of current date
+        await loadMeals(dateStr);
         setDayData(prev => ({
           ...prev,
           date: dateStr
         }));
-        loadMeals(dateStr);
       }
     });
 
@@ -107,9 +121,9 @@ const HomePage = () => {
       childList: true
     });
 
-    // Initial load
-    const initialDateStr = document.title.split(' - ')[1] || dayData.date;
-    if (initialDateStr !== dayData.date) {
+    // Initial load - only if we can get a valid date from the title
+    const initialDateStr = getDateFromTitle();
+    if (initialDateStr && initialDateStr !== dayData.date) {
       setDayData(prev => ({
         ...prev,
         date: initialDateStr

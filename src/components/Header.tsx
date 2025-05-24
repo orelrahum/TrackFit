@@ -14,29 +14,51 @@ const Header = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(() => {
+    // Initialize with current date in local timezone
+    const now = new Date();
+    // Convert to local midnight
+    const local = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return local;
+  });
 
-  // Update document title when date changes
-  useEffect(() => {
+  const updateDateAndTitle = (newDate: Date) => {
     if (location.pathname === "/") {
-      document.title = `TrackFit - ${currentDate.toISOString().split('T')[0]}`;
+      const year = newDate.getFullYear();
+      const month = String(newDate.getMonth() + 1).padStart(2, '0');
+      const day = String(newDate.getDate()).padStart(2, '0');
+      document.title = `TrackFit - ${year}-${month}-${day}`;
     }
-  }, [currentDate, location.pathname]);
+    // Update the state after setting the title
+    setCurrentDate(newDate);
+  };
 
   const handlePrevDay = () => {
-    const prevDay = new Date(currentDate);
-    prevDay.setDate(currentDate.getDate() - 1);
-    setCurrentDate(prevDay);
+    const prevDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() - 1
+    );
+    updateDateAndTitle(prevDay);
   };
 
   const handleNextDay = () => {
-    const nextDay = new Date(currentDate);
-    nextDay.setDate(currentDate.getDate() + 1);
-    setCurrentDate(nextDay);
+    const nextDay = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate() + 1
+    );
+    updateDateAndTitle(nextDay);
   };
 
   const handleTodayClick = () => {
-    setCurrentDate(new Date());
+    const now = new Date();
+    const today = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    updateDateAndTitle(today);
   };
 
   // Only show date navigation on homepage
