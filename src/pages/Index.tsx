@@ -8,24 +8,7 @@ const Index = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      // Check if there's a stored redirect path
-      const redirectPath = sessionStorage.getItem('redirect_after_load');
-      if (redirectPath && redirectPath !== '/') {
-        sessionStorage.removeItem('redirect_after_load');
-        navigate(redirectPath.replace('/TrackFit', ''));
-        return;
-      }
-      // Default redirect for authenticated users without stored path
-      navigate('/home');
-    }
-  }, [user, navigate]);
-
-  // Show loading state while checking auth
-  if (user) {
-    return null;
-  }
+  // No auto-redirect for authenticated users, instead show a button to go to home
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20" dir="rtl">
@@ -43,13 +26,23 @@ const Index = () => {
             </p>
           </div>
 
-          <Button 
-            size="lg" 
-            onClick={() => navigate('/auth/login')}
-            className="text-lg px-8"
-          >
-            התחל עכשיו
-          </Button>
+          {user ? (
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/home')}
+              className="text-lg px-8"
+            >
+              עבור לדף הבית
+            </Button>
+          ) : (
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/auth/login')}
+              className="text-lg px-8"
+            >
+              התחל עכשיו
+            </Button>
+          )}
         </div>
 
         {/* Features Section */}

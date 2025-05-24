@@ -62,24 +62,39 @@ const HomePage = () => {
     }
   };
 
-  // Load meals both on mount and when date changes
+  // Initial load on mount
+  useEffect(() => {
+    const loadInitialData = async () => {
+      // Set initial date and title
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
+      
+      document.title = `TrackFit - ${dateStr}`;
+      await loadMeals(dateStr);
+      
+      // Update state with current date
+      setDayData(prev => ({
+        ...prev,
+        date: dateStr
+      }));
+    };
+
+    loadInitialData();
+  }, []); // Run only once on mount
+
+  // Watch for date changes through title updates
   useEffect(() => {
     const getDateFromTitle = (): string | null => {
       const dateStr = document.title.split(' - ')[1];
       return dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : null;
     };
 
-    // Set initial title and load data
-    const year = dayData.date.split('-')[0];
-    const month = dayData.date.split('-')[1];
-    const day = dayData.date.split('-')[2];
-    document.title = `TrackFit - ${year}-${month}-${day}`;
-    loadMeals(dayData.date);
-
-    // Set up observer for date changes
     const observer = new MutationObserver(async () => {
       const dateStr = getDateFromTitle();
-      if (dateStr) {
+      if (dateStr && dateStr !== dayData.date) {
         await loadMeals(dateStr);
       }
     });
@@ -91,7 +106,7 @@ const HomePage = () => {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [dayData.date]); // Re-run only when date changes
 
   const handleAddMeal = () => {
     setSelectedMeal(undefined);

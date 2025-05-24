@@ -28,13 +28,8 @@ const Header = () => {
       const year = currentDate.getFullYear();
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const day = String(currentDate.getDate()).padStart(2, '0');
-      document.title = `TrackFit - ${year}-${month}-${day}`;
-
-// Ensure user's URL matches the current date
-const currentPath = location.pathname;
-if (currentPath === '/home') {
-  window.history.replaceState(null, '', `/TrackFit/home`);
-}
+      const dateStr = `${year}-${month}-${day}`;
+      document.title = `TrackFit - ${dateStr}`;
     }
   }, [location.pathname, currentDate]);
 
@@ -43,7 +38,8 @@ if (currentPath === '/home') {
       const year = newDate.getFullYear();
       const month = String(newDate.getMonth() + 1).padStart(2, '0');
       const day = String(newDate.getDate()).padStart(2, '0');
-      document.title = `TrackFit - ${year}-${month}-${day}`;
+      const dateStr = `${year}-${month}-${day}`;
+      document.title = `TrackFit - ${dateStr}`;
     }
     // Update the state after setting the title
     setCurrentDate(newDate);
