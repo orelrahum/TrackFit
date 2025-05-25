@@ -73,8 +73,8 @@ export function WaterTracker({ date }: WaterTrackerProps) {
         {/* Progress Section */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span>{currentAmount} מ"ל</span>
             <span>{DAILY_GOAL} מ"ל</span>
+            <span>{currentAmount} מ"ל</span>
           </div>
           <Progress value={progress} />
           {currentAmount > 0 && (
