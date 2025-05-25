@@ -221,8 +221,25 @@ const HomePage = () => {
 
   return (
     <div className="h-screen w-screen bg-background">
-      <main className="p-6 h-screen">
-        <div className="space-y-6 md:space-y-0 md:flex md:gap-6 w-full mt-6">
+      <main className="p-4 md:p-6 h-screen">
+        {/* Mobile Layout */}
+        <div className="block md:hidden space-y-4 w-full">
+          <DailySummary nutrients={dayData.nutrients} />
+          <WaterTracker date={dayData.date} />
+          <MealList
+            meals={dayData.meals}
+            onAddMeal={handleAddMeal}
+            onAddWithAI={handleAddWithAI}
+            onEditMeal={handleEditMeal}
+            onDeleteMeal={handleDeleteMeal}
+            onEditGroup={handleEditMealGroup}
+            onDeleteGroup={handleDeleteGroup}
+            onAddFoodToGroup={handleAddFoodToGroup}
+          />
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex md:gap-6 w-full mt-6">
           <div className="md:w-2/3">
             <MealList
               meals={dayData.meals}

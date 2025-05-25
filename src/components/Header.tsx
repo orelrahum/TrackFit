@@ -97,11 +97,11 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-background shadow-sm py-4 mb-6 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
+    <header className="bg-background shadow-sm py-2 md:py-4 mb-4 md:mb-6 sticky top-0 z-50">
+      <div className="container mx-auto px-2 md:px-4">
         <div className="flex justify-between items-center">
-          {/* Left: Empty space or Date Navigation */}
-          <div className="w-[400px] flex items-center">
+          {/* Left: Date Navigation - Hidden on mobile */}
+          <div className="hidden md:flex md:w-[400px] items-center">
             {showDateNav && (
               <DateNavigation 
                 currentDate={currentDate} 
@@ -112,24 +112,24 @@ const Header = () => {
             )}
           </div>
 
-          {/* Center: Logos - Always centered */}
+          {/* Center: Logos - Responsive */}
           <div className="flex-1 flex justify-center items-center">
             <button 
               onClick={() => navigate(user ? '/home' : '/welcome')} 
-              className="flex items-center hover:opacity-80 transition-all rounded-lg hover:bg-accent/10 p-2"
+              className="flex items-center hover:opacity-80 transition-all rounded-lg hover:bg-accent/10 p-1 md:p-2"
             >
-              <img src={LogoText} alt="TrackFit Logo" className="h-8" />
-              <img src={SymbolLogo} alt="TrackFit Symbol" className="h-8 mr-2" />
+              <img src={SymbolLogo} alt="TrackFit Symbol" className="h-7 md:h-8" />
+              <img src={LogoText} alt="TrackFit Logo" className="hidden md:block h-7 md:h-8 md:mr-2" />
             </button>
           </div>
 
-          {/* Right: Theme Toggle and Sign Out Buttons */}
-          <div className="w-[400px] flex items-center gap-4 justify-end">
+          {/* Right: Theme Toggle and Sign Out Buttons - Responsive */}
+          <div className="flex items-center gap-2 md:gap-4 justify-end md:w-[400px]">
             <ThemeToggle />
             {user && (
               <button
                 onClick={handleSignOut}
-                className="px-3 py-1 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                className="px-2 md:px-3 py-1 text-xs md:text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium rounded-md hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
               >
                 התנתק
               </button>

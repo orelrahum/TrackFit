@@ -35,21 +35,21 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
   const [groupToDelete, setGroupToDelete] = useState<MealGroup | null>(null);
   return (
     <div className="bg-card rounded-lg h-full flex flex-col">
-      <div className="p-4 border-b flex-none">
-        <h2 className="text-lg font-semibold">הארוחות שלי</h2>
+      <div className="p-3 md:p-4 border-b flex-none">
+        <h2 className="text-base md:text-lg font-semibold">הארוחות שלי</h2>
       </div>
       
-      <div className="overflow-y-auto" style={{ height: "calc(100vh - 14rem)" }}>
+      <div className="overflow-y-auto flex-1">
         {meals.length > 0 ? (
           meals.map((mealGroup) => (
             <div key={mealGroup.id} className="mb-4">
-              <div className="p-3 bg-muted border-b flex justify-between items-center">
-                <h3 className="font-medium text-foreground">{mealGroup.name}</h3>
-                <div className="flex gap-1">
+              <div className="p-2 md:p-3 bg-muted border-b flex justify-between items-center">
+                <h3 className="font-medium text-sm md:text-base text-foreground">{mealGroup.name}</h3>
+                <div className="flex gap-0.5 md:gap-1">
                   {onAddFoodToGroup && (
                     <button
                       onClick={() => onAddFoodToGroup(mealGroup.id)}
-                      className="p-1.5 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-950 rounded-full"
+                      className="p-2 md:p-1.5 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-950 rounded-full"
                       aria-label="הוסף מאכל לארוחה"
                     >
                       <Plus className="h-4 w-4" />
@@ -61,7 +61,7 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
                         setEditingGroup(mealGroup);
                         setEditedGroupName(mealGroup.name);
                       }}
-                      className="p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
+                      className="p-2 md:p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
                       aria-label="ערוך שם קבוצה"
                     >
                       <Pencil className="h-4 w-4" />
@@ -70,7 +70,7 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
                   {onDeleteGroup && (
                     <button
                       onClick={() => setGroupToDelete(mealGroup)}
-                      className="p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
+                      className="p-2 md:p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
                       aria-label="מחק קבוצה"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -95,7 +95,7 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
         )}
       </div>
       
-      <div className="p-4 flex justify-between border-t bg-card sticky bottom-0">
+      <div className="p-3 md:p-4 flex justify-between border-t bg-card sticky bottom-0">
         <Button
           variant="outline"
           className="flex items-center"
