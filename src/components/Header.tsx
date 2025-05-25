@@ -97,9 +97,9 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-background shadow-sm py-2 md:py-4 mb-4 md:mb-6 sticky top-0 z-50">
-      <div className="container mx-auto px-2 md:px-4">
-        <div className="flex justify-between items-center">
+    <header className="bg-background shadow-sm h-14 sticky top-0 z-50">
+      <div className="container h-full mx-auto px-2 md:px-4">
+        <div className="flex justify-between items-center h-full">
           {/* Left: Date Navigation - Hidden on mobile */}
           <div className="hidden md:flex md:w-[400px] items-center">
             {showDateNav && (

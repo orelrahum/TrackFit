@@ -17,7 +17,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
   
   if (isLoading) {
     return (
-      <div className="p-4 bg-card rounded-lg mb-4 space-y-4">
+      <div className="p-3 bg-card rounded-lg h-fit space-y-3">
         <Skeleton className="h-6 w-full" />
         <Skeleton className="h-6 w-full" />
         <Skeleton className="h-6 w-full" />
@@ -30,7 +30,7 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
     console.error('Target loading error:', error)
     // מקרה של שגיאה: נציג לפחות את הערכים הנוכחיים בלי היעדים
     return (
-      <div className="p-4 bg-card rounded-lg mb-4">
+      <div className="p-3 bg-card rounded-lg h-fit">
         <div className="text-center text-red-500 mb-4">
           שגיאה בטעינת היעדים היומיים. מציג ערכים נוכחיים בלבד.
         </div>
@@ -47,14 +47,14 @@ const DailySummary = ({ nutrients }: DailySummaryProps) => {
   if (!targets.calories || !targets.protein || !targets.carbs || !targets.fat) {
     console.error('Invalid target values:', targets)
     return (
-      <div className="p-4 bg-card rounded-lg mb-4 text-center text-red-500 dark:text-red-400">
+      <div className="p-3 bg-card rounded-lg h-fit text-center text-red-500 dark:text-red-400">
         שגיאה: ערכי היעדים אינם תקינים
       </div>
     )
   }
 
   return (
-    <div className="p-4 bg-card rounded-lg mb-4">
+    <div className="p-3 bg-card rounded-lg h-fit">
       <ProgressBar 
         current={nutrients.calories.amount}
         max={targets.calories}

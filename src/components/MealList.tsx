@@ -34,12 +34,12 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
   const [editedGroupName, setEditedGroupName] = useState("");
   const [groupToDelete, setGroupToDelete] = useState<MealGroup | null>(null);
   return (
-    <div className="bg-card rounded-lg h-full flex flex-col">
-      <div className="p-3 md:p-4 border-b flex-none">
+    <div className="bg-card rounded-lg h-full flex flex-col overflow-hidden">
+      <div className="p-2 md:p-3 border-b flex-none">
         <h2 className="text-base md:text-lg font-semibold">הארוחות שלי</h2>
       </div>
       
-      <div className="overflow-y-auto flex-1">
+      <div className="overflow-y-auto flex-1 min-h-0">
         {meals.length > 0 ? (
           meals.map((mealGroup) => (
             <div key={mealGroup.id} className="mb-4">
@@ -105,7 +105,7 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
         )}
       </div>
       
-      <div className="p-3 md:p-4 flex justify-between border-t bg-card sticky bottom-0">
+      <div className="p-2 md:p-3 flex justify-between border-t bg-card flex-none">
         <Button
           variant="outline"
           className="flex items-center"

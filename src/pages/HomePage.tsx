@@ -221,14 +221,15 @@ const HomePage = () => {
   };
 
   return (
-    <div className="h-screen w-screen bg-background">
-      <main className="p-4 md:p-6 h-screen">
+    <div className="fixed inset-0 pt-14 bg-background overflow-hidden flex flex-col">
+      <main className="flex-1 min-h-0 px-2">
         {/* Mobile Layout */}
-        <div className="block md:hidden space-y-4 w-full">
-          <div className="bg-card rounded-lg p-3">
-            <DateNavigation 
-              currentDate={new Date(dayData.date)}
-              onPrevDay={() => {
+        <div className="block md:hidden h-full overflow-y-auto">
+          <div className="space-y-2 pb-4">
+            <div className="bg-card rounded-lg p-2 mb-1">
+              <DateNavigation 
+                currentDate={new Date(dayData.date)}
+                onPrevDay={() => {
                 const prevDay = new Date(dayData.date);
                 prevDay.setDate(prevDay.getDate() - 1);
                 const year = prevDay.getFullYear();
@@ -256,26 +257,11 @@ const HomePage = () => {
                 const dateStr = `${year}-${month}-${day}`;
                 document.title = `TrackFit - ${dateStr}`;
                 loadMeals(dateStr);
-              }}
-            />
-          </div>
-          <DailySummary nutrients={dayData.nutrients} />
-          <WaterTracker date={dayData.date} />
-          <MealList
-            meals={dayData.meals}
-            onAddMeal={handleAddMeal}
-            onAddWithAI={handleAddWithAI}
-            onEditMeal={handleEditMeal}
-            onDeleteMeal={handleDeleteMeal}
-            onEditGroup={handleEditMealGroup}
-            onDeleteGroup={handleDeleteGroup}
-            onAddFoodToGroup={handleAddFoodToGroup}
-          />
-        </div>
-
-        {/* Desktop Layout */}
-        <div className="hidden md:flex md:gap-6 w-full mt-6">
-          <div className="md:w-2/3">
+                }}
+              />
+            </div>
+            <DailySummary nutrients={dayData.nutrients} />
+            <WaterTracker date={dayData.date} />
             <MealList
               meals={dayData.meals}
               onAddMeal={handleAddMeal}
@@ -287,7 +273,23 @@ const HomePage = () => {
               onAddFoodToGroup={handleAddFoodToGroup}
             />
           </div>
-          <div className="md:w-1/3 space-y-6">
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex md:gap-3 w-full h-full">
+          <div className="md:w-2/3 overflow-y-auto pr-1">
+            <MealList
+              meals={dayData.meals}
+              onAddMeal={handleAddMeal}
+              onAddWithAI={handleAddWithAI}
+              onEditMeal={handleEditMeal}
+              onDeleteMeal={handleDeleteMeal}
+              onEditGroup={handleEditMealGroup}
+              onDeleteGroup={handleDeleteGroup}
+              onAddFoodToGroup={handleAddFoodToGroup}
+            />
+          </div>
+          <div className="md:w-1/3 space-y-2 overflow-y-auto pb-2">
             <DailySummary nutrients={dayData.nutrients} />
             <WaterTracker date={dayData.date} />
           </div>

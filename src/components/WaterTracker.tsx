@@ -65,11 +65,11 @@ export function WaterTracker({ date }: WaterTrackerProps) {
   }
 
   return (
-    <Card dir="rtl" className="w-full max-w-3xl mx-auto">
+    <Card dir="rtl" className="w-full h-fit">
       <CardHeader>
         <CardTitle className="text-2xl text-center">מעקב שתייה</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {/* Progress Section */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
