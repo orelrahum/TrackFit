@@ -10,26 +10,8 @@ interface MealItemProps {
 const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border-b hover:bg-muted">
-      <div className="flex items-center space-x-3 space-x-reverse mb-2 sm:mb-0">
-        <div className="w-10 h-10 rounded-full overflow-hidden bg-muted flex-shrink-0">
-          {meal.image_url ? (
-            <img 
-              src={meal.image_url} 
-              alt={meal.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                e.currentTarget.src = '/placeholder.svg';
-              }}
-            />
-          ) : (
-            <img 
-              src="/placeholder.svg"
-              alt="placeholder"
-              className="w-full h-full object-cover"
-            />
-          )}
-        </div>
-        <div className="mr-3 flex items-center">
+      <div className="flex items-center mb-2 sm:mb-0">
+        <div className="flex items-center">
           <div>
             <h3 className="font-medium text-sm">
               {meal.name}
