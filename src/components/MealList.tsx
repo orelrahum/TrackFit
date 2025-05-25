@@ -43,39 +43,49 @@ const MealList = ({ meals, onAddMeal, onAddWithAI, onEditMeal, onDeleteMeal, onE
         {meals.length > 0 ? (
           meals.map((mealGroup) => (
             <div key={mealGroup.id} className="mb-4">
-              <div className="p-2 md:p-3 bg-muted border-b flex justify-between items-center">
-                <h3 className="font-medium text-sm md:text-base text-foreground">{mealGroup.name}</h3>
-                <div className="flex gap-0.5 md:gap-1">
-                  {onAddFoodToGroup && (
-                    <button
-                      onClick={() => onAddFoodToGroup(mealGroup.id)}
-                      className="p-2 md:p-1.5 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-950 rounded-full"
-                      aria-label="הוסף מאכל לארוחה"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                  )}
-                  {onEditGroup && (
-                    <button
-                      onClick={() => {
-                        setEditingGroup(mealGroup);
-                        setEditedGroupName(mealGroup.name);
-                      }}
-                      className="p-2 md:p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
-                      aria-label="ערוך שם קבוצה"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-                  )}
-                  {onDeleteGroup && (
-                    <button
-                      onClick={() => setGroupToDelete(mealGroup)}
-                      className="p-2 md:p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
-                      aria-label="מחק קבוצה"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  )}
+              <div className="p-2 md:p-3 bg-muted border-b flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center">
+                  <h3 className="font-medium text-base md:text-lg">{mealGroup.name}</h3>
+                  <div className="flex mr-2">
+                    {onAddFoodToGroup && (
+                      <button
+                        onClick={() => onAddFoodToGroup(mealGroup.id)}
+                        className="p-2 md:p-1.5 text-green-600 hover:bg-green-100 dark:text-green-400 dark:hover:bg-green-950 rounded-full"
+                        aria-label="הוסף מאכל לארוחה"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    )}
+                    {onEditGroup && (
+                      <button
+                        onClick={() => {
+                          setEditingGroup(mealGroup);
+                          setEditedGroupName(mealGroup.name);
+                        }}
+                        className="p-2 md:p-1.5 text-blue-600 hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-950 rounded-full"
+                        aria-label="ערוך שם קבוצה"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    )}
+                    {onDeleteGroup && (
+                      <button
+                        onClick={() => setGroupToDelete(mealGroup)}
+                        className="p-2 md:p-1.5 text-red-600 hover:bg-red-100 dark:text-red-400 dark:hover:bg-red-950 rounded-full"
+                        aria-label="מחק קבוצה"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-6 mt-2 sm:mt-0 flex-row-reverse">
+                  <span className="text-base font-medium text-foreground">{Math.round(mealGroup.meals.reduce((sum, meal) => sum + meal.calories, 0))} קק"ל</span>
+                  <div className="flex gap-4">
+                    <span className="text-xs text-muted-foreground">חלבון {Math.round(mealGroup.meals.reduce((sum, meal) => sum + meal.protein, 0))}g</span>
+                    <span className="text-xs text-muted-foreground">פחמימות {Math.round(mealGroup.meals.reduce((sum, meal) => sum + meal.carbs, 0))}g</span>
+                    <span className="text-xs text-muted-foreground">שומן {Math.round(mealGroup.meals.reduce((sum, meal) => sum + meal.fat, 0))}g</span>
+                  </div>
                 </div>
               </div>
               {mealGroup.meals.map((meal) => (
