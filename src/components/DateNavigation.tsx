@@ -49,32 +49,32 @@ const DateNavigation = ({ currentDate, onPrevDay, onNextDay, onTodayClick }: Dat
   const displayDate = getDisplayDate(currentDate);
   
   return (
-    <div className="flex items-center justify-between w-[400px] px-4 py-2">
+    <div className="flex items-center justify-between w-full md:w-[400px] px-2 md:px-4 py-2">
       <button 
         onClick={onPrevDay}
-        className="p-1 rounded-full hover:bg-gray-100"
+        className="p-2 md:p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label="היום הקודם"
       >
-        <CircleChevronRight className="h-6 w-6" />
+        <CircleChevronRight className="h-5 md:h-6 w-5 md:w-6" />
       </button>
       
-      <div className="flex items-center gap-2 min-w-[280px] justify-center">
-        <h2 className="text-lg font-bold whitespace-nowrap">{displayDate}</h2>
+      <div className="flex items-center gap-2 justify-center overflow-hidden">
+        <h2 className="text-sm md:text-lg font-bold whitespace-nowrap truncate">{displayDate}</h2>
         <button
           onClick={onTodayClick}
-          className="p-1 rounded-full hover:bg-gray-100"
+          className="p-2 md:p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0"
           aria-label="חזור להיום"
         >
-          <Calendar className="h-5 w-5" />
+          <Calendar className="h-4 md:h-5 w-4 md:w-5" />
         </button>
       </div>
       
       <button 
         onClick={onNextDay}
-        className="p-1 rounded-full hover:bg-gray-100"
+        className="p-2 md:p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
         aria-label="היום הבא"
       >
-        <CircleChevronLeft className="h-6 w-6" />
+        <CircleChevronLeft className="h-5 md:h-6 w-5 md:w-6" />
       </button>
     </div>
   );

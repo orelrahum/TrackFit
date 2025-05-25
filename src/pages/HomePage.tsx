@@ -9,6 +9,7 @@ import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
 import { DayData, MealGroup, Meal } from "@/types";
 import { calculateTotalNutrients } from "@/lib/meal-utils";
+import DateNavigation from "@/components/DateNavigation";
 
 const HomePage = () => {
   const { toast } = useToast();
@@ -224,6 +225,40 @@ const HomePage = () => {
       <main className="p-4 md:p-6 h-screen">
         {/* Mobile Layout */}
         <div className="block md:hidden space-y-4 w-full">
+          <div className="bg-card rounded-lg p-3">
+            <DateNavigation 
+              currentDate={new Date(dayData.date)}
+              onPrevDay={() => {
+                const prevDay = new Date(dayData.date);
+                prevDay.setDate(prevDay.getDate() - 1);
+                const year = prevDay.getFullYear();
+                const month = String(prevDay.getMonth() + 1).padStart(2, '0');
+                const day = String(prevDay.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+                document.title = `TrackFit - ${dateStr}`;
+                loadMeals(dateStr);
+              }}
+              onNextDay={() => {
+                const nextDay = new Date(dayData.date);
+                nextDay.setDate(nextDay.getDate() + 1);
+                const year = nextDay.getFullYear();
+                const month = String(nextDay.getMonth() + 1).padStart(2, '0');
+                const day = String(nextDay.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+                document.title = `TrackFit - ${dateStr}`;
+                loadMeals(dateStr);
+              }}
+              onTodayClick={() => {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+                document.title = `TrackFit - ${dateStr}`;
+                loadMeals(dateStr);
+              }}
+            />
+          </div>
           <DailySummary nutrients={dayData.nutrients} />
           <WaterTracker date={dayData.date} />
           <MealList
