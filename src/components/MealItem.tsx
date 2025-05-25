@@ -67,16 +67,13 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
         </div>
       </div>
       
-      <div className="flex justify-between sm:justify-end w-full sm:w-auto">
-        <div className="text-left">
-          <div className="font-semibold">{meal.calories} קק"ל</div>
-          <div className="grid grid-cols-3 gap-x-3 text-xs text-muted-foreground sm:flex sm:text-sm sm:space-x-2 sm:space-x-reverse">
-            <span>חלבון {meal.protein}g</span>
-            <span>פחמימות {meal.carbs}g</span>
-            <span>שומן {meal.fat}g</span>
-          </div>
+      <div className="flex items-center gap-6 mt-2 sm:mt-0 flex-row-reverse">
+        <span className="text-2xl font-bold text-foreground">{meal.calories} קק"ל</span>
+        <div className="flex gap-4">
+          <span className="text-xs text-muted-foreground">חלבון {meal.protein}g</span>
+          <span className="text-xs text-muted-foreground">פחמימות {meal.carbs}g</span>
+          <span className="text-xs text-muted-foreground">שומן {meal.fat}g</span>
         </div>
-        
       </div>
     </div>
   );
