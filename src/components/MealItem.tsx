@@ -68,7 +68,7 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
       </div>
       
       <div className="flex items-center gap-6 mt-2 sm:mt-0 flex-row-reverse">
-        <span className="text-2xl font-bold text-foreground">{meal.calories} קק"ל</span>
+        <span className="text-base font-medium text-foreground">{meal.calories} קק"ל</span>
         <div className="flex gap-4">
           <span className="text-xs text-muted-foreground">חלבון {meal.protein}g</span>
           <span className="text-xs text-muted-foreground">פחמימות {meal.carbs}g</span>
