@@ -133,14 +133,8 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
   const handleFoodSelect = (food: DBFood) => {
     setSelectedFood(food);
     
-    // Always default to גרמים if available, otherwise use first available unit
-    let defaultUnit = "גרמים";
-    if (food.food_measurement_units) {
-      const hasGrams = food.food_measurement_units.some(mu => mu.unit === "גרמים");
-      if (!hasGrams && food.food_measurement_units.length > 0) {
-        defaultUnit = food.food_measurement_units[0].unit;
-      }
-    }
+    // Always use גרמים as default unit, regardless of food_measurement_units
+    const defaultUnit = "גרמים";
 
     try {
       const defaultWeight = (defaultUnit === "גרמים" || defaultUnit === "גרם") ? 100 : 1;
@@ -399,7 +393,10 @@ const AddEditMealDialog = ({ isOpen: dialogOpen, onClose, onSave, meal, currentD
                     </SelectTrigger>
                     <SelectContent align="end" className="w-full min-w-[200px]" dir="rtl">
                       <div className="flex flex-col">
-                        {selectedFood.food_measurement_units?.map(mu => (
+                        <SelectItem value="גרמים" className="text-right flex flex-row-reverse justify-between">
+                          גרמים (1g)
+                        </SelectItem>
+                        {selectedFood.food_measurement_units?.filter(mu => mu.unit !== "גרמים").map(mu => (
                           <SelectItem key={mu.unit} value={mu.unit} className="text-right flex flex-row-reverse justify-between">
                             {mu.unit} ({mu.grams}g)
                           </SelectItem>

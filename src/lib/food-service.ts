@@ -66,16 +66,22 @@ export function calculateNutrition(
   amount: number,
   unit: string
 ) {
-  // Find the selected unit's gram equivalent
-  const measurementUnit = food.food_measurement_units?.find(
-    mu => mu.unit === unit
-  )
-  if (!measurementUnit) {
-    throw new Error(`Unit ${unit} not found for food ${food.name_he}`)
+  let totalGrams: number;
+  
+  // If using גרמים, use direct gram conversion (1:1)
+  if (unit === "גרמים") {
+    totalGrams = amount;
+  } else {
+    // For other units, find the conversion from food_measurement_units
+    if (!food.food_measurement_units || food.food_measurement_units.length === 0) {
+      throw new Error(`Only גרמים unit is available for food ${food.name_he}`);
+    }
+    const measurementUnit = food.food_measurement_units.find(mu => mu.unit === unit);
+    if (!measurementUnit) {
+      throw new Error(`Unit ${unit} not found for food ${food.name_he}`);
+    }
+    totalGrams = amount * measurementUnit.grams;
   }
-
-  // Calculate total grams
-  const totalGrams = amount * measurementUnit.grams
 
   // Calculate nutrition based on total grams (values in food are per 100g)
   const multiplier = totalGrams / 100
