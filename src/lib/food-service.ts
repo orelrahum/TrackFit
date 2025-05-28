@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import type { DBFood, DBFoodMeasurementUnit } from '../types'
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Fetches all foods with their measurement units
@@ -61,6 +62,43 @@ export async function getFoodMeasurementUnits(foodId: string) {
 /**
  * Calculates nutritional values based on amount and unit
  */
+
+/**
+ * Adds a new food to the database
+ */
+export async function addFood(food: Omit<DBFood, 'id' | 'created_at' | 'updated_at'>) {
+  const foodId = uuidv4();
+  const { data, error } = await supabase
+    .from('foods')
+    .insert([
+      {
+        id: foodId,
+        ...food
+      }
+    ])
+    .select()
+    .single();
+
+  if (error) throw new Error(`Error adding food: ${error.message}`);
+  return { ...data, id: foodId } as DBFood;
+}
+
+/**
+ * Adds measurement units for a food
+ */
+export async function addFoodMeasurementUnits(foodId: string, units: Omit<DBFoodMeasurementUnit, 'food_id'>[]) {
+  const { data, error } = await supabase
+    .from('food_measurement_units')
+    .insert(
+      units.map(unit => ({
+        food_id: foodId,
+        ...unit
+      }))
+    );
+
+  if (error) throw new Error(`Error adding measurement units: ${error.message}`);
+}
+
 export function calculateNutrition(
   food: DBFood,
   amount: number,

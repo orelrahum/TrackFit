@@ -7,6 +7,7 @@ import { WaterTracker } from "@/components/WaterTracker"
 import DailySummary from "@/components/DailySummary";
 import MealList from "@/components/MealList";
 import AddEditMealDialog from "@/components/AddEditMealDialog";
+import { AddFoodDialog } from "@/components/AddFoodDialog";
 import { DayData, MealGroup, Meal } from "@/types";
 import { calculateTotalNutrients } from "@/lib/meal-utils";
 import DateNavigation from "@/components/DateNavigation";
@@ -262,6 +263,9 @@ const HomePage = () => {
             </div>
             <DailySummary nutrients={dayData.nutrients} />
             <WaterTracker date={dayData.date} />
+            <div className="bg-card rounded-lg p-4">
+              <AddFoodDialog />
+            </div>
             <MealList
               meals={dayData.meals}
               onAddMeal={handleAddMeal}
@@ -292,6 +296,9 @@ const HomePage = () => {
           <div className="md:w-1/3 space-y-2 overflow-y-auto pb-2">
             <DailySummary nutrients={dayData.nutrients} />
             <WaterTracker date={dayData.date} />
+            <div className="bg-card rounded-lg p-4">
+              <AddFoodDialog />
+            </div>
           </div>
         </div>
       </main>
