@@ -16,7 +16,6 @@ export function AddFoodDialog() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [nameHe, setNameHe] = useState('')
-  const [nameEn, setNameEn] = useState('')
   const [calories, setCalories] = useState('')
   const [protein, setProtein] = useState('')
   const [carbs, setCarbs] = useState('')
@@ -28,7 +27,6 @@ export function AddFoodDialog() {
 
   const resetForm = () => {
     setNameHe('')
-    setNameEn('')
     setCalories('')
     setProtein('')
     setCarbs('')
@@ -62,13 +60,12 @@ export function AddFoodDialog() {
       setIsLoading(true)
       
       // Validate inputs
-      if (!nameHe || !nameEn || !calories || !protein || !carbs || !fat) {
+      if (!nameHe || !calories || !protein || !carbs || !fat) {
         throw new Error('נא למלא את כל השדות החובה')
       }
 
       const foodData = {
         name_he: nameHe,
-        name_en: nameEn,
         calories: parseFloat(calories),
         protein: parseFloat(protein),
         carbs: parseFloat(carbs),
@@ -114,27 +111,15 @@ export function AddFoodDialog() {
           <DialogTitle>הוספת מוצר חדש</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nameHe">שם המוצר בעברית</Label>
-              <Input
-                id="nameHe"
-                value={nameHe}
-                onChange={(e) => setNameHe(e.target.value)}
-                placeholder="לדוגמה: לחם"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="nameEn">שם המוצר באנגלית</Label>
-              <Input
-                id="nameEn"
-                value={nameEn}
-                onChange={(e) => setNameEn(e.target.value)}
-                placeholder="For example: Bread"
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="nameHe">שם המוצר בעברית</Label>
+            <Input
+              id="nameHe"
+              value={nameHe}
+              onChange={(e) => setNameHe(e.target.value)}
+              placeholder="לדוגמה: לחם"
+              required
+            />
           </div>
 
           <div className="grid grid-cols-4 gap-4">

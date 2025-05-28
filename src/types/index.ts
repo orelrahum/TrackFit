@@ -38,7 +38,7 @@ export interface DayData {
 export interface DBFood {
   id: string;
   name_he: string;
-  name_en: string;
+  name_en?: string;
   calories: number;
   protein: number;
   fat: number;
