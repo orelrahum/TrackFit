@@ -11,11 +11,40 @@ import { AddFoodDialog } from "@/components/AddFoodDialog";
 import { DayData, MealGroup, Meal } from "@/types";
 import { calculateTotalNutrients } from "@/lib/meal-utils";
 import DateNavigation from "@/components/DateNavigation";
+import { getUserProfile, getUserTargets } from "@/lib/target-service";
 
 const HomePage = () => {
   const { toast } = useToast();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUserSetup = async () => {
+      if (!user) return;
+
+      try {
+        const profile = await getUserProfile(user.id);
+        if (!profile) {
+          navigate('/questionnaire', { replace: true });
+          return;
+        }
+
+        const targets = await getUserTargets(user.id).catch(() => null);
+        if (!targets) {
+          toast({
+            title: "נדרשת השלמת הגדרת היעדים",
+            description: "מועבר לדף הגדרת הפרופיל",
+          });
+          navigate('/questionnaire', { replace: true });
+        }
+      } catch (error) {
+        console.error('Error checking user setup:', error);
+      }
+    };
+
+    checkUserSetup();
+  }, [user, navigate, toast]);
+
   const [dayData, setDayData] = useState<DayData>(() => {
     const now = new Date();
     const local = new Date(now.getFullYear(), now.getMonth(), now.getDate());
