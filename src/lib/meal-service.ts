@@ -136,9 +136,8 @@ export async function getMealsForDate(date: string) {
     throw new Error(`Error fetching meals: ${error.message}. Date: ${date}, User ID: ${userId}`)
   }
 
-  // Filter out meal groups with no meals
-  const nonEmptyGroups = mealGroups?.filter(group => group.meals && group.meals.length > 0) || []
-  return nonEmptyGroups
+  // Return all meal groups, including empty ones
+  return mealGroups || []
 }
 
 /**

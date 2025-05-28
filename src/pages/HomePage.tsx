@@ -205,7 +205,6 @@ const HomePage = () => {
   const handleDeleteMeal = async (id: string) => {
     try {
       await deleteMeal(id);
-      await deleteEmptyMealGroups(dayData.date);
       await loadMeals(dayData.date);
       toast({
         title: "הארוחה נמחקה בהצלחה",
