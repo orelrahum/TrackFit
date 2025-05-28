@@ -12,6 +12,14 @@ const MealItem = ({ meal, onEdit, onDelete }: MealItemProps) => {
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border-b hover:bg-muted">
       <div className="flex items-center mb-2 sm:mb-0">
         <div className="flex items-center">
+          <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0 ml-3 bg-muted">
+            <img
+              src={meal.image_url || "/placeholder.svg"}
+              alt={meal.name}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
           <div>
             <h3 className="font-medium text-sm">
               {meal.name}
